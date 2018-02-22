@@ -1,4 +1,4 @@
-package in.thetechguru.musiclogger.musiclogger;
+package in.thetechguru.musiclogger.musiclogger.service;
 
 /**
  * Created by amit on 19/2/18.
@@ -21,9 +21,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.List;
+
+import in.thetechguru.musiclogger.musiclogger.logger.Logger;
 
 @RequiresApi(21)
 public class ScrobblerService extends Service {
@@ -60,14 +61,6 @@ public class ScrobblerService extends Service {
                         public void onMetadataChanged(@Nullable MediaMetadata metadata) {
                             super.onMetadataChanged(metadata);
 
-                            /*StringBuilder controllersList = new StringBuilder();
-                            for(MediaController contro : controllers){
-                                controllersList.append(contro.getPackageName()).append("\n");
-                            }
-
-                            Toast.makeText(ScrobblerService.this, "Metadata changed : Controllers active : " + controllers.size()
-                                    + "\n" + controllersList, Toast.LENGTH_SHORT).show();*/
-
                             if (metadata != null) {
                                 Log.d("ScrobblerService", "Artist: " + metadata.getString(MediaMetadata.METADATA_KEY_ARTIST));
                                 Log.d("ScrobblerService", "Title: " + metadata.getString(MediaMetadata.METADATA_KEY_TITLE));
@@ -95,8 +88,6 @@ public class ScrobblerService extends Service {
 
                                 Logger.logMusicData( data
                                          );
-
-                                Toast.makeText(ScrobblerService.this, data, Toast.LENGTH_SHORT).show();
 
                             }
                         }
@@ -126,13 +117,6 @@ public class ScrobblerService extends Service {
                         public void onPlaybackStateChanged(@NonNull PlaybackState state) {
                             super.onPlaybackStateChanged(state);
                             Log.d("ScrobblerService", "onPlaybackStateChanged: playing " + (state.getState() == PlaybackState.STATE_PLAYING));
-                            StringBuilder controllersList = new StringBuilder();
-                            for(MediaController contro : controllers){
-                                controllersList.append(contro.getPackageName()).append("\n");
-                            }
-
-                            /*Toast.makeText(ScrobblerService.this, "Metadata changed : Controllers active : " + controllers.size()
-                                    + "\n" + controllersList, Toast.LENGTH_SHORT).show();*/
                         }
                     };
 

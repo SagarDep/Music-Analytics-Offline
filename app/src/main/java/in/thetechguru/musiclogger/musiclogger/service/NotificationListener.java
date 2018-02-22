@@ -1,8 +1,5 @@
-package in.thetechguru.musiclogger.musiclogger;
+package in.thetechguru.musiclogger.musiclogger.service;
 
-import android.media.session.MediaController;
-import android.media.session.MediaSessionManager;
-import android.media.session.PlaybackState;
 import android.service.notification.NotificationListenerService;
 
 /**
@@ -11,18 +8,14 @@ import android.service.notification.NotificationListenerService;
 
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
-import android.app.Notification;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.service.notification.StatusBarNotification;
-import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
