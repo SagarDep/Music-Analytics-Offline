@@ -6,17 +6,17 @@ import android.media.MediaMetadata
  * Created by abami on 23-Feb-18.
  * custom model class which will be used to keep track of currently playing media
  */
-data class MediaSessionMetaData(var title:String = ""
-                                , var artist:String = ""
-                                , var album: String = ""
-                                , var genre: String = ""
-                                , var alt_artist: String = ""
+data class MediaSessionMetaData(var title:String? = ""
+                                , var artist:String? = ""
+                                , var album: String? = ""
+                                , var genre: String? = ""
+                                , var alt_artist: String? = ""
                                 , var duration: Long = 0L
-                                , var album_art_uri: String = ""
-                                , var track_number: Long = 0L
-                                , var number_of_tracks: Long = 0L
-                                , var started_playing_at: Long = 0L//custom field tried to generate from media session callbacks
-                                , var approx_played_for: Long = 0L)//custom field tried to generate from media session callbacks
+                                , var album_art_uri: String? = ""
+                                , var track_number: Long? = 0L
+                                , var number_of_tracks: Long? = 0L
+                                , var started_playing_at: Long? = 0L//custom field tried to generate from media session callbacks
+                                , var approx_played_for: Long? = 0L)//custom field tried to generate from media session callbacks
 {
     /*
     Initially build the object by  raw mediametadata object
@@ -39,6 +39,6 @@ data class MediaSessionMetaData(var title:String = ""
     @todo refine this later
      */
     fun isValidRecord(): Boolean{
-        return !(title.isEmpty())
+        return !(title?.isEmpty())!!
     }
 }
