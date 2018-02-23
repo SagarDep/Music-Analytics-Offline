@@ -55,6 +55,7 @@ public class ScrobblerService extends Service {
 
     private Binder mBinder;
     private MediaController.Callback controllerCallback;
+    public static boolean isServiceRunning = false;
 
     //for maintaining currently playing media and sending it to db once media changes
     private MediaSessionMetaData currentMedia;
@@ -79,11 +80,16 @@ public class ScrobblerService extends Service {
         MediaSessionManager manager = ((MediaSessionManager) getSystemService(Context.MEDIA_SESSION_SERVICE));
         if (manager != null) {
             disposable = observeMetadata(manager)
-                    .sample(10, TimeUnit.SECONDS)
+                    .sample(3, TimeUnit.SECONDS)
                     .subscribeWith(new DisposableSubscriber<MediaSessionMetaData>() {
                         @Override
                         public void onNext(MediaSessionMetaData mediaSessionMetaData) {
                             Log.d("ScrobblerService", "onNext: " + mediaSessionMetaData);
+                            if(currentMedia==null){
+                                currentMedia = mediaSessionMetaData;
+                            }else {
+                                pushRecord(mediaSessionMetaData);
+                            }
                         }
 
                         @Override
@@ -97,6 +103,15 @@ public class ScrobblerService extends Service {
                         }
                 });
         }
+        isServiceRunning = true;
+    }
+
+    private void pushRecord(MediaSessionMetaData mediaSessionMetaData){
+        currentMedia.setApproxPlayTime();
+        //logic to push record on db
+        Log.d("ScrobblerService", "pushRecord: " + currentMedia);
+        //update current media with latest one
+        currentMedia = mediaSessionMetaData;
     }
 
     @Override
@@ -104,6 +119,7 @@ public class ScrobblerService extends Service {
         super.onDestroy();
         if(disposable!=null && !disposable.isDisposed()) disposable.dispose();
         Toast.makeText(this, "Scrobbler turning off", Toast.LENGTH_SHORT).show();
+        isServiceRunning = false;
     }
 
     public Flowable<MediaSessionMetaData> observeMetadata(final MediaSessionManager manager){
@@ -164,6 +180,7 @@ public class ScrobblerService extends Service {
                 emitter.setCancellable(new Cancellable() {
                     @Override
                     public void cancel() throws Exception {
+                        Log.d("ScrobblerService", "cancel: removing listeners");
                         manager.removeOnActiveSessionsChangedListener(listener);
                     }
                 });

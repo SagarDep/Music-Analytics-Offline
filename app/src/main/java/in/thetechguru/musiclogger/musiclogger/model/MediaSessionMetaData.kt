@@ -11,12 +11,12 @@ data class MediaSessionMetaData(var title:String? = ""
                                 , var album: String? = ""
                                 , var genre: String? = ""
                                 , var alt_artist: String? = ""
-                                , var duration: Long = 0L
+                                , var total_duration: Long = 0L
                                 , var album_art_uri: String? = ""
-                                , var track_number: Long? = 0L
-                                , var number_of_tracks: Long? = 0L
-                                , var started_playing_at: Long? = 0L//custom field tried to generate from media session callbacks
-                                , var approx_played_for: Long? = 0L)//custom field tried to generate from media session callbacks
+                                , var track_number: Long = 0L
+                                , var number_of_tracks: Long = 0L
+                                , var started_playing_at: Long = 0L//custom field tried to generate from media session callbacks
+                                , var approx_played_for: Long = 0L)//custom field tried to generate from media session callbacks
 {
     /*
     Initially build the object by  raw mediametadata object
@@ -29,9 +29,20 @@ data class MediaSessionMetaData(var title:String? = ""
         this.genre = meta_data.getString(MediaMetadata.METADATA_KEY_GENRE)
         this.alt_artist = meta_data.getString(MediaMetadata.METADATA_KEY_ALBUM_ARTIST)
         this.album_art_uri = meta_data.getString(MediaMetadata.METADATA_KEY_ALBUM_ART_URI)
-        this.duration = meta_data.getLong(MediaMetadata.METADATA_KEY_DURATION)
+        this.total_duration = meta_data.getLong(MediaMetadata.METADATA_KEY_DURATION)
         this.track_number = meta_data.getLong(MediaMetadata.METADATA_KEY_TRACK_NUMBER)
         this.number_of_tracks = meta_data.getLong(MediaMetadata.METADATA_KEY_NUM_TRACKS)
+        this.started_playing_at = System.currentTimeMillis()
+    }
+
+    fun setApproxPlayTime(){
+        val current_time = System.currentTimeMillis()
+        if ((current_time.minus(started_playing_at)) >= total_duration) {
+            approx_played_for = total_duration
+        } else {
+            approx_played_for = current_time.minus(started_playing_at)
+        }
+
     }
 
     /*
@@ -40,5 +51,9 @@ data class MediaSessionMetaData(var title:String? = ""
      */
     fun isValidRecord(): Boolean{
         return !(title?.isEmpty())!!
+    }
+
+    override fun toString(): String {
+        return "$title : $artist : Approx play time : $approx_played_for"
     }
 }

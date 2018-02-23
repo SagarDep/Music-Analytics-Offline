@@ -29,8 +29,6 @@ import java.util.Set;
 @TargetApi(Build.VERSION_CODES.KITKAT)
 public class NotificationListener extends android.service.notification.NotificationListenerService {
 
-
-    private static int scrobblingProcessPID = -1;
     private IBinder mBinder;
 
     @Override
@@ -94,37 +92,8 @@ public class NotificationListener extends android.service.notification.Notificat
     }
 
     public static boolean isAppScrobbling(Context context) {
-        if (context == null)
-            return false;
-        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningAppProcessInfo> pids = manager.getRunningAppProcesses();
-        if (scrobblingProcessPID == -1) {
-            String needle = "in.thetechguru.musiclogger.musiclogger";
-            for (int i = 0; i < pids.size(); i++) {
-                ActivityManager.RunningAppProcessInfo info = pids.get(i);
-                if (info.processName.equalsIgnoreCase(needle)) {
-                    scrobblingProcessPID = info.pid;
-                    break;
-                }
-            }
-        }
-
-        ComponentName serviceComponent = new ComponentName(context, Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT ?
-                NotificationListenerService.class : ScrobblerService.class);
-        boolean serviceRunning = false;
-        List<ActivityManager.RunningServiceInfo> runningServices = manager.getRunningServices(Integer.MAX_VALUE);
-        if (runningServices != null ) {
-            for (ActivityManager.RunningServiceInfo service : runningServices) {
-                if ((service.service.equals(serviceComponent) && service.pid == scrobblingProcessPID)) {
-                    serviceRunning = true;
-                    break;
-                }
-            }
-        }
-
-        Log.d("NotificationListener", "isAppScrobbling: " + serviceRunning);
-
-        return serviceRunning;
+        Log.d("NotificationListener", "isAppScrobbling: " + ScrobblerService.isServiceRunning);
+        return ScrobblerService.isServiceRunning;
     }
 
     /* NLS Stuff */
