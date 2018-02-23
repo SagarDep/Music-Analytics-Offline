@@ -34,6 +34,8 @@ public class MusicRecord {
     @ColumnInfo(name = "album_id") public String album_id;
     @ColumnInfo(name = "genre_id") public String genre_id;
     @ColumnInfo(name = "song_id") public String song_id;
-
-
+    @ColumnInfo(name = "played_at") public Long played_at;
+    @ColumnInfo(name = "approx_played_for") public String approx_played_for;
+    @ColumnInfo(name = "total_duration") public String total_duration;
+    @ColumnInfo(name = "package_name") public String package_name;
 }

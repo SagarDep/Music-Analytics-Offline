@@ -25,13 +25,16 @@ import android.util.Log;
 import java.util.List;
 
 import in.thetechguru.musiclogger.musiclogger.logger.Logger;
+import in.thetechguru.musiclogger.musiclogger.model.MediaSessionMetaData;
 
 @RequiresApi(21)
 public class ScrobblerService extends Service {
 
     private Binder mBinder;
-
     private MediaController.Callback controllerCallback;
+
+    //for maintaining currently playing media and sending it to db once media changes
+    private MediaSessionMetaData currentMedia;
 
     @Override
     public IBinder onBind(Intent intent) {
