@@ -1,13 +1,29 @@
+
+/**
+ * Created by amit on 19/2/18.
+ * *  * This file is part of Music Logger
+ *  * Copyright © 2017 Music Logger
+ *  *
+ *  * Music Logger is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * Music Logger is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  * GNU General Public License for more details.
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with Music Logger.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ */
+
 package in.thetechguru.musiclogger.musiclogger.service;
 
 import android.service.notification.NotificationListenerService;
 
-/**
- * Created by amit on 19/2/18.
- */
-
 import android.annotation.TargetApi;
-import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -17,12 +33,7 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.service.notification.StatusBarNotification;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
-
-
-import java.util.List;
-import java.util.Set;
 
 
 @SuppressWarnings("deprecation")
@@ -78,6 +89,11 @@ public class NotificationListener extends android.service.notification.Notificat
         startService(intent);
     }
 
+    /**
+     * check if permission is there to read notifications
+     * @param context If you are android developer and you don't know context, may god bless you
+     * @return boolean status about permission
+     */
     public static boolean isListeningAuthorized(Context context) {
         ContentResolver contentResolver = context.getContentResolver();
         String enabledNotificationListeners = Settings.Secure.getString(contentResolver, "enabled_notification_listeners");
@@ -86,11 +102,11 @@ public class NotificationListener extends android.service.notification.Notificat
         return !(enabledNotificationListeners == null || !enabledNotificationListeners.contains(packageName));
     }
 
-    public static boolean isNotificationListenerServiceEnabled(Context context) {
-        Set<String> packageNames = NotificationManagerCompat.getEnabledListenerPackages(context);
-        return packageNames.contains(context.getPackageName());
-    }
-
+    /**
+     * Check if background service for reading media sessions and pushing data to DB is running
+     * @param context context
+     * @return status
+     */
     public static boolean isAppScrobbling(Context context) {
         Log.d("NotificationListener", "isAppScrobbling: " + ScrobblerService.isServiceRunning);
         return ScrobblerService.isServiceRunning;

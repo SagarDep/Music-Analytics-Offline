@@ -2,6 +2,21 @@ package in.thetechguru.musiclogger.musiclogger.service;
 
 /**
  * Created by amit on 19/2/18.
+ * *  * This file is part of Music Logger
+ *  * Copyright © 2017 Music Logger
+ *  *
+ *  * Music Logger is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * Music Logger is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  * GNU General Public License for more details.
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with Music Logger.  If not, see <http://www.gnu.org/licenses/>.
+ *
  *
  */
 
@@ -65,6 +80,9 @@ public class ScrobblerService extends Service {
         return START_STICKY;
     }
 
+    /**
+     * create flowable and start receiving changing meta data from media session callbacks
+     */
     @Override
     public void onCreate() {
         super.onCreate();
@@ -100,6 +118,10 @@ public class ScrobblerService extends Service {
         isServiceRunning = true;
     }
 
+    /**
+     * push record on DB
+     * @param mediaSessionMetaData all the data we need to make entry in DB
+     */
     private void pushRecord(MediaSessionMetaData mediaSessionMetaData){
         currentMediaMetaData.setApproxPlayTime();
 
@@ -110,6 +132,9 @@ public class ScrobblerService extends Service {
         currentMediaMetaData = mediaSessionMetaData;
     }
 
+    /**
+     * dispose all reactive things we use here
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -118,6 +143,11 @@ public class ScrobblerService extends Service {
         isServiceRunning = false;
     }
 
+    /**
+     * returns observable which keep emitting media session changes until eternity
+     * @param manager Media session manager instance
+     * @return Observable
+     */
     public Flowable<MediaSessionMetaData> observeMetadata(final MediaSessionManager manager){
         return Flowable.create(new FlowableOnSubscribe<MediaSessionMetaData>() {
             @Override

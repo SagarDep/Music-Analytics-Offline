@@ -12,6 +12,22 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 /**
  * Created by abami on 22-Feb-18.
+ * *  * This file is part of Music Logger
+ *  * Copyright © 2017 Music Logger
+ *  *
+ *  * Music Logger is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * Music Logger is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  * GNU General Public License for more details.
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with Music Logger.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
  */
 
 @Entity(tableName = "music_records",
@@ -49,6 +65,13 @@ public class MusicRecord {
         total_duration = metaData.getTotal_duration();
         approx_played_for = metaData.getApprox_played_for();
         package_name = metaData.getPackage_name();
+    }
+
+    public MusicRecord(Long artist_id, Long album_id, Long genre_id, Long song_id){
+        this.artist_id = artist_id;
+        this.album_id = album_id;
+        this.genre_id = genre_id;
+        this.song_id = song_id;
     }
 
     @Override
