@@ -10,10 +10,6 @@ import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.media.MediaMetadata;
 import android.media.session.MediaController;
 import android.media.session.MediaSessionManager;
@@ -21,7 +17,6 @@ import android.media.session.PlaybackState;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,25 +24,20 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.intellij.lang.annotations.Flow;
-import org.reactivestreams.Subscription;
-
 import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import in.thetechguru.musiclogger.musiclogger.logger.Logger;
-import in.thetechguru.musiclogger.musiclogger.model.MediaSessionMetaData;
+import in.thetechguru.musiclogger.musiclogger.data_view_model.DataModel;
+import in.thetechguru.musiclogger.musiclogger.data_view_model.model_classes.MediaSessionMetaData;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
 import io.reactivex.FlowableOnSubscribe;
-import io.reactivex.FlowableSubscriber;
-import io.reactivex.Observable;
+import io.reactivex.Scheduler;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Cancellable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.internal.operators.flowable.FlowableFromCallable;
+import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
 
 @RequiresApi(21)
@@ -58,9 +48,10 @@ public class ScrobblerService extends Service {
     public static boolean isServiceRunning = false;
 
     //for maintaining currently playing media and sending it to db once media changes
-    private MediaSessionMetaData currentMedia;
-
+    private MediaSessionMetaData currentMediaMetaData;
     private Disposable disposable;
+    private DataModel dataModel;
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -81,12 +72,13 @@ public class ScrobblerService extends Service {
         if (manager != null) {
             disposable = observeMetadata(manager)
                     .sample(3, TimeUnit.SECONDS)
+                    .observeOn(Schedulers.io())
                     .subscribeWith(new DisposableSubscriber<MediaSessionMetaData>() {
                         @Override
-                        public void onNext(MediaSessionMetaData mediaSessionMetaData) {
+                        public void onNext(final MediaSessionMetaData mediaSessionMetaData) {
                             Log.d("ScrobblerService", "onNext: " + mediaSessionMetaData);
-                            if(currentMedia==null){
-                                currentMedia = mediaSessionMetaData;
+                            if(currentMediaMetaData == null){
+                                currentMediaMetaData = mediaSessionMetaData;
                             }else {
                                 pushRecord(mediaSessionMetaData);
                             }
@@ -103,15 +95,19 @@ public class ScrobblerService extends Service {
                         }
                 });
         }
+        dataModel = new DataModel();
+        dataModel.init();
         isServiceRunning = true;
     }
 
     private void pushRecord(MediaSessionMetaData mediaSessionMetaData){
-        currentMedia.setApproxPlayTime();
-        //logic to push record on db
-        Log.d("ScrobblerService", "pushRecord: " + currentMedia);
+        currentMediaMetaData.setApproxPlayTime();
+
+        Log.d("ScrobblerService", "pushRecord: " + currentMediaMetaData);
+        dataModel.pushRecord(mediaSessionMetaData);
+
         //update current media with latest one
-        currentMedia = mediaSessionMetaData;
+        currentMediaMetaData = mediaSessionMetaData;
     }
 
     @Override
@@ -141,7 +137,7 @@ public class ScrobblerService extends Service {
                                         super.onMetadataChanged(metadata);
                                         if (metadata != null) {
                                             Log.d("ScrobblerService", "Artist: " + metadata.getString(MediaMetadata.METADATA_KEY_ARTIST));
-                                            emitter.onNext(new MediaSessionMetaData(metadata));
+                                            emitter.onNext(new MediaSessionMetaData(metadata, controller.getPackageName()));
                                         }
                                     }
 

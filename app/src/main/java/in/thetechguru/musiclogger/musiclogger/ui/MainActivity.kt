@@ -2,7 +2,7 @@ package `in`.thetechguru.musiclogger.musiclogger.ui
 
 import `in`.thetechguru.musiclogger.musiclogger.service.NotificationListener
 import `in`.thetechguru.musiclogger.musiclogger.R
-import `in`.thetechguru.musiclogger.musiclogger.db.MusicRecordsDB
+import `in`.thetechguru.musiclogger.musiclogger.data_view_model.db.MusicRecordsDB
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
@@ -10,6 +10,7 @@ import android.content.Intent
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import kotlinx.android.synthetic.main.activity_main.*
 import java.util.concurrent.Executors
 
 
@@ -26,8 +27,33 @@ class MainActivity : AppCompatActivity() {
         }
 
         Executors.newSingleThreadExecutor().execute(Runnable {
-            val data = MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.getAll()
-            Log.d("MainActivity :", data.toString());
+
+            val songs = MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.getAllSongs()
+            val artists = MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.getAllArtists()
+            val albums = MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.getAllAlbums()
+            val genres = MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.getAllGenres()
+            val records = MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.getAll()
+
+            val stat_string = "Total records : ${records?.size} \n Total artists : ${artists?.size} " +
+                    "\n Total albums : ${albums?.size} " +
+                    "\n Total songs : ${songs?.size} " +
+                    "\n Total genre : ${genres?.size} \n"
+
+            var artist_string:String = ""
+            artists?.forEach {
+                artist -> artist_string = artist_string + "${artist.artist_name} \n"
+            }
+
+            var records_string:String = ""
+            records?.forEach {
+                record -> records_string = records_string + "${record.toString()} \n"
+            }
+
+
+            stats.setText(stat_string)
+            records_text.setText(records_string)
+            artists_text.setText(artist_string)
+
         })
     }
 

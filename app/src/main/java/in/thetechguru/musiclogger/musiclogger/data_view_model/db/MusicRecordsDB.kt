@@ -1,6 +1,6 @@
-package `in`.thetechguru.musiclogger.musiclogger.db
+package `in`.thetechguru.musiclogger.musiclogger.data_view_model.db
 
-import `in`.thetechguru.musiclogger.musiclogger.db.entities.*
+import `in`.thetechguru.musiclogger.musiclogger.data_view_model.db.entities.*
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
@@ -9,7 +9,8 @@ import android.content.Context
 /**
  * Created by abami on 22-Feb-18.
  */
-@Database(entities = arrayOf(MusicRecord::class, Artist::class, Album::class, Genre::class, Song::class), version = 1)
+@Database(entities = arrayOf(MusicRecord::class, Artist::class, Album::class, Genre::class, Song::class)
+        , version = 1)
 abstract class MusicRecordsDB : RoomDatabase() {
 
     abstract fun MusicRecordDAO():MusicRecordsDao?
@@ -17,7 +18,7 @@ abstract class MusicRecordsDB : RoomDatabase() {
     companion object {
         private var instance: MusicRecordsDB? = null
 
-        fun getInstance(context: Context) :MusicRecordsDB?{
+        @JvmStatic fun getInstance(context: Context) :MusicRecordsDB?{
             if(instance == null){
                 synchronized(MusicRecordsDB::class){
                     instance = Room.databaseBuilder(context.applicationContext

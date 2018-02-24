@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "140840637365",
+    "firebase_url": "https://musiclogger-b8ee7.firebaseio.com",
+    "project_id": "musiclogger-b8ee7",
+    "storage_bucket": "musiclogger-b8ee7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:140840637365:android:6b93dba0c4e4cc08",
+        "android_client_info": {
+          "package_name": "in.thetechguru.musiclogger.musiclogger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "140840637365-20e9394brhe772kbebh0c2q2ijflkl16.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.thetechguru.musiclogger.musiclogger",
+            "certificate_hash": "836ef2fd9d0a96e5853886f80308bbf0716400f5"
+          }
+        },
+        {
+          "client_id": "140840637365-t9gqio5v92sn43tg9fuias1fl79el2ja.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOi7mTbId42YzG0AFN7ZSeC87ONE9XFrM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "140840637365-t9gqio5v92sn43tg9fuias1fl79el2ja.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
