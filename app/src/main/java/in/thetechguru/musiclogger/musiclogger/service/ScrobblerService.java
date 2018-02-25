@@ -68,6 +68,7 @@ public class ScrobblerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d("ScrobblerService", "onCreate: service started");
         MediaSessionManager manager = ((MediaSessionManager) getSystemService(Context.MEDIA_SESSION_SERVICE));
         if (manager != null) {
             disposable = observeMetadata(manager)
@@ -115,6 +116,7 @@ public class ScrobblerService extends Service {
         super.onDestroy();
         if(disposable!=null && !disposable.isDisposed()) disposable.dispose();
         Toast.makeText(this, "Scrobbler turning off", Toast.LENGTH_SHORT).show();
+        Log.d("ScrobblerService", "onDestroy: service destroyed");
         isServiceRunning = false;
     }
 
@@ -129,7 +131,9 @@ public class ScrobblerService extends Service {
                             final MediaController controller = controllers.get(0);
                             Log.d("ScrobblerService", "onActiveSessionsChanged: " + controller.getPackageName());
                             if (controllerCallback != null) {
-                                controller.unregisterCallback(controllerCallback);
+                                for(MediaController mediaController: controllers) {
+                                    mediaController.registerCallback(controllerCallback);
+                                }
                             }
                             controllerCallback = new MediaController.Callback() {
                                     @Override
@@ -168,7 +172,9 @@ public class ScrobblerService extends Service {
                                         Log.d("ScrobblerService", "onPlaybackStateChanged: playing " + (state.getState() == PlaybackState.STATE_PLAYING));
                                     }
                                 };
-                            controller.registerCallback(controllerCallback);
+                            for(MediaController mediaController: controllers) {
+                                mediaController.registerCallback(controllerCallback);
+                            }
                         }
                     }
                 };

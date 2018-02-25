@@ -74,6 +74,7 @@ public class NotificationListener extends android.service.notification.Notificat
     }
 
     private void startScrobblingService() {
+        Log.d("NotificationListener", "startScrobblingService: starting scrobbling service");
         Intent intent = new Intent(getApplicationContext(), ScrobblerService.class);
         startService(intent);
     }
