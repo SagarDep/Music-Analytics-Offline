@@ -90,7 +90,7 @@ public class ScrobblerService extends Service {
         MediaSessionManager manager = ((MediaSessionManager) getSystemService(Context.MEDIA_SESSION_SERVICE));
         if (manager != null) {
             disposable = observeMetadata(manager)
-                    .sample(3, TimeUnit.SECONDS)
+                    .sample(10, TimeUnit.SECONDS)
                     .observeOn(Schedulers.io())
                     .subscribeWith(new DisposableSubscriber<MediaSessionMetaData>() {
                         @Override
@@ -127,6 +127,7 @@ public class ScrobblerService extends Service {
         currentMediaMetaData.setApproxPlayTime();
 
         Log.d("ScrobblerService", "pushRecord: " + currentMediaMetaData);
+        Toast.makeText(this, "pushRecord: " + currentMediaMetaData.getArtist() + " : " + currentMediaMetaData.getTitle(), Toast.LENGTH_SHORT).show();
         dataModel.pushRecord(mediaSessionMetaData);
 
         //update current media with latest one
@@ -166,11 +167,17 @@ public class ScrobblerService extends Service {
                                 }
                             }
                             controllerCallback = new MediaController.Callback() {
+
+                                    private String package_name ;
+
                                     @Override
                                     public void onMetadataChanged(@Nullable final MediaMetadata metadata) {
                                         super.onMetadataChanged(metadata);
                                         if (metadata != null) {
-                                            Log.d("ScrobblerService", "Artist: " + metadata.getString(MediaMetadata.METADATA_KEY_ARTIST));
+                                            Log.d("" +
+                                                    "" +
+                                                    "" +
+                                                    "", "Artist: " + metadata.getString(MediaMetadata.METADATA_KEY_ARTIST));
                                             emitter.onNext(new MediaSessionMetaData(metadata, controller.getPackageName()));
                                         }
                                     }
