@@ -3,6 +3,7 @@ package in.thetechguru.musiclogger.musiclogger.data_view_model.db.entities;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 import in.thetechguru.musiclogger.musiclogger.data_view_model.model_classes.MediaSessionMetaData;
@@ -59,18 +60,12 @@ public class MusicRecord {
 
     public MusicRecord(){}
 
+    @Ignore
     public MusicRecord(MediaSessionMetaData metaData){
         started_playing_at = metaData.getStarted_playing_at();
         total_duration = metaData.getTotal_duration();
         approx_played_for = metaData.getApprox_played_for();
         package_name = metaData.getPackage_name();
-    }
-
-    public MusicRecord(Long artist_id, Long album_id, Long genre_id, Long song_id){
-        this.artist_id = artist_id;
-        this.album_id = album_id;
-        this.genre_id = genre_id;
-        this.song_id = song_id;
     }
 
     @Override

@@ -33,8 +33,14 @@ data class MediaSessionMetaData(var package_name: String = ""
         this.package_name = package_name+""
     }
 
+    /**
+     * set approximate play time before pushing record to DB
+     * Its done by subtracting current time from the time when media was started
+     * It is approximate and I need to figure out way to increase its accuracy
+     */
     fun setApproxPlayTime(){
         val current_time = System.currentTimeMillis()
+
         if ((current_time.minus(started_playing_at)) >= total_duration) {
             approx_played_for = total_duration
         } else {

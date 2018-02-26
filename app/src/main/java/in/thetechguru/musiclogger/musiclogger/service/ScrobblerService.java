@@ -32,6 +32,7 @@ import android.media.session.PlaybackState;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -71,6 +72,8 @@ public class ScrobblerService extends Service {
     private MediaSessionMetaData currentMediaMetaData;
     private Disposable disposable;
     private DataModel dataModel;
+
+    private Handler handler;
 
     HashMap<MediaController, MediaController.Callback> map;
 
@@ -125,6 +128,7 @@ public class ScrobblerService extends Service {
         map = new HashMap<>();
         dataModel = new DataModel();
         dataModel.init();
+        handler = new Handler(getMainLooper());
         isServiceRunning = true;
     }
 
@@ -186,10 +190,12 @@ public class ScrobblerService extends Service {
                                     public void onMetadataChanged(@Nullable final MediaMetadata metadata) {
                                         super.onMetadataChanged(metadata);
                                         if (metadata != null) {
-                                            Log.d("" +
-                                                    "" +
-                                                    "" +
-                                                    "", "Artist: " + metadata.getString(MediaMetadata.METADATA_KEY_ARTIST));
+                                            Log.d("onMetadataChanged", "Artist: " + metadata.getString(MediaMetadata.METADATA_KEY_ARTIST));
+
+                                            //filters will come here eventually after monitoring metadata changes for various packages
+                                            String artist = metadata.getString(MediaMetadata.METADATA_KEY_ARTIST);
+                                            if(packageName.equals("com.google.android.youtube") && (artist==null || artist.equals(""))) return;
+
                                             emitter.onNext(new MediaSessionMetaData(metadata, packageName));
                                         }
                                     }

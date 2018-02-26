@@ -22,7 +22,6 @@ package `in`.thetechguru.musiclogger.musiclogger.ui
 
 import `in`.thetechguru.musiclogger.musiclogger.service.NotificationListener
 import `in`.thetechguru.musiclogger.musiclogger.R
-import `in`.thetechguru.musiclogger.musiclogger.TestData
 import `in`.thetechguru.musiclogger.musiclogger.data_view_model.db.MusicRecordsDB
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -30,7 +29,6 @@ import android.widget.Toast
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
