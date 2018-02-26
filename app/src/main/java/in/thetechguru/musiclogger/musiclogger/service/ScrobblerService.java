@@ -39,6 +39,7 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -55,17 +56,23 @@ import io.reactivex.functions.Cancellable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
 
+
+/**
+ * this service should run indefinitely in client mobile
+ * no matter what
+ */
 @RequiresApi(21)
 public class ScrobblerService extends Service {
 
     private Binder mBinder;
-    private MediaController.Callback controllerCallback;
     public static boolean isServiceRunning = false;
 
     //for maintaining currently playing media and sending it to db once media changes
     private MediaSessionMetaData currentMediaMetaData;
     private Disposable disposable;
     private DataModel dataModel;
+
+    HashMap<MediaController, MediaController.Callback> map;
 
 
     @Override
@@ -90,7 +97,8 @@ public class ScrobblerService extends Service {
         MediaSessionManager manager = ((MediaSessionManager) getSystemService(Context.MEDIA_SESSION_SERVICE));
         if (manager != null) {
             disposable = observeMetadata(manager)
-                    .sample(10, TimeUnit.SECONDS)
+                    //.debounce(5, TimeUnit.SECONDS)  //avoid multiple media changes to be propagated
+                    .sample(10, TimeUnit.SECONDS)    //sample latest from last 10 seconds, useful in case user is skipping songs
                     .observeOn(Schedulers.io())
                     .subscribeWith(new DisposableSubscriber<MediaSessionMetaData>() {
                         @Override
@@ -114,6 +122,7 @@ public class ScrobblerService extends Service {
                         }
                 });
         }
+        map = new HashMap<>();
         dataModel = new DataModel();
         dataModel.init();
         isServiceRunning = true;
@@ -127,8 +136,7 @@ public class ScrobblerService extends Service {
         currentMediaMetaData.setApproxPlayTime();
 
         Log.d("ScrobblerService", "pushRecord: " + currentMediaMetaData);
-        Toast.makeText(this, "pushRecord: " + currentMediaMetaData.getArtist() + " : " + currentMediaMetaData.getTitle(), Toast.LENGTH_SHORT).show();
-        dataModel.pushRecord(mediaSessionMetaData);
+        dataModel.pushRecord(currentMediaMetaData);
 
         //update current media with latest one
         currentMediaMetaData = mediaSessionMetaData;
@@ -144,6 +152,8 @@ public class ScrobblerService extends Service {
         Toast.makeText(this, "Scrobbler turning off", Toast.LENGTH_SHORT).show();
         Log.d("ScrobblerService", "onDestroy: service destroyed");
         isServiceRunning = false;
+        map.clear();
+        map = null;
     }
 
     /**
@@ -161,14 +171,16 @@ public class ScrobblerService extends Service {
                         if (controllers.size() > 0) {
                             final MediaController controller = controllers.get(0);
                             Log.d("ScrobblerService", "onActiveSessionsChanged: " + controller.getPackageName());
-                            if (controllerCallback != null) {
-                                for(MediaController mediaController: controllers) {
-                                    mediaController.registerCallback(controllerCallback);
-                                }
-                            }
-                            controllerCallback = new MediaController.Callback() {
 
-                                    private String package_name ;
+                            for(MediaController mediaController: controllers) {
+                                if(map.get(mediaController)!=null) mediaController.unregisterCallback(map.get(mediaController));
+                            }
+
+                            map.clear();
+
+                            for(final MediaController mediaController: controllers) {
+                                MediaController.Callback controllerCallback = new MediaController.Callback() {
+                                    private String packageName = mediaController.getPackageName() ;
 
                                     @Override
                                     public void onMetadataChanged(@Nullable final MediaMetadata metadata) {
@@ -178,7 +190,7 @@ public class ScrobblerService extends Service {
                                                     "" +
                                                     "" +
                                                     "", "Artist: " + metadata.getString(MediaMetadata.METADATA_KEY_ARTIST));
-                                            emitter.onNext(new MediaSessionMetaData(metadata, controller.getPackageName()));
+                                            emitter.onNext(new MediaSessionMetaData(metadata, packageName));
                                         }
                                     }
 
@@ -209,8 +221,9 @@ public class ScrobblerService extends Service {
                                         Log.d("ScrobblerService", "onPlaybackStateChanged: playing " + (state.getState() == PlaybackState.STATE_PLAYING));
                                     }
                                 };
-                            for(MediaController mediaController: controllers) {
+
                                 mediaController.registerCallback(controllerCallback);
+                                map.put(mediaController, controllerCallback);
                             }
                         }
                     }

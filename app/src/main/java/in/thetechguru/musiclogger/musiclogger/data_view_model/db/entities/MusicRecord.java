@@ -5,7 +5,6 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
 
-import in.thetechguru.musiclogger.musiclogger.MyApp;
 import in.thetechguru.musiclogger.musiclogger.data_view_model.model_classes.MediaSessionMetaData;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
@@ -53,7 +52,7 @@ public class MusicRecord {
     @ColumnInfo(name = "album_id", index = true) public Long album_id;
     @ColumnInfo(name = "genre_id", index = true) public Long genre_id;
     @ColumnInfo(name = "song_id", index = true) public Long song_id;
-    @ColumnInfo(name = "played_at") public Long played_at;
+    @ColumnInfo(name = "started_playing_at") public Long started_playing_at;
     @ColumnInfo(name = "approx_played_for") public Long approx_played_for;
     @ColumnInfo(name = "total_duration") public Long total_duration;
     @ColumnInfo(name = "package_name") public String package_name;
@@ -61,7 +60,7 @@ public class MusicRecord {
     public MusicRecord(){}
 
     public MusicRecord(MediaSessionMetaData metaData){
-        played_at = metaData.getStarted_playing_at();
+        started_playing_at = metaData.getStarted_playing_at();
         total_duration = metaData.getTotal_duration();
         approx_played_for = metaData.getApprox_played_for();
         package_name = metaData.getPackage_name();
@@ -76,7 +75,15 @@ public class MusicRecord {
 
     @Override
     public String toString() {
-        return " Id : " + id + " : Artist id : " + artist_id + " : Album id : " + album_id + " : Song id :" + song_id + " : Duration :" + total_duration ;
+        return "Record Id : " + id
+                + "\nPackage Name : " + package_name
+                + "\nArtist id : " + artist_id
+                + "\nAlbum id : " + album_id
+                + "\nSong id : " + song_id
+                + "\nTotal Duration : " + total_duration
+                + "\nStarted playing at : " + started_playing_at
+                + "\nPlayed For : " + approx_played_for
+                + "\n\n";
     }
 }
 

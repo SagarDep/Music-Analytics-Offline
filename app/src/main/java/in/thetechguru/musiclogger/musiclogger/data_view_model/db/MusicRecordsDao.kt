@@ -85,4 +85,20 @@ interface MusicRecordsDao {
     @Query("SELECT id from albums where album_name = :album_name")
     fun getAlbumId(album_name:String):Long
 
+    //nuke all tables
+    @Query("DELETE from music_records")
+    fun nukeRecords()
+
+    @Query("DELETE from songs")
+    fun nukeSongs()
+
+    @Query("DELETE from artists")
+    fun nukeArtists()
+
+    @Query("DELETE from genres")
+    fun nukeGenres()
+
+    @Query("DELETE from albums")
+    fun nukeAlbums()
+
 }

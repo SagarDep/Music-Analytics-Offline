@@ -1,6 +1,7 @@
 package `in`.thetechguru.musiclogger.musiclogger.data_view_model.model_classes
 
 import android.media.MediaMetadata
+import android.util.Log
 
 /**
  * Created by abami on 23-Feb-18.
@@ -39,7 +40,6 @@ data class MediaSessionMetaData(var package_name: String = ""
         } else {
             approx_played_for = current_time.minus(started_playing_at)
         }
-
     }
 
     /*

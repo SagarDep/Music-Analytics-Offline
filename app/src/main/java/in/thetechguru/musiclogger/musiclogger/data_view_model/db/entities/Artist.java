@@ -39,7 +39,7 @@ public class Artist {
 
         public Artist(){}
 
-    @Ignore
+        @Ignore
         public Artist(@NonNull String artist_name){
                 this.artist_name = artist_name;
         }

@@ -71,6 +71,12 @@ class MainActivity : AppCompatActivity() {
                 artist -> artist_string = artist_string + "${artist.artist_name} : ${artist.id} \n"
             }
 
+            var songs_string = ""
+            songs?.forEach {
+                song -> songs_string = songs_string + "${song.song_name} : ${song.id} \n"
+            }
+
+
             var albums_string = ""
             albums?.forEach {
                 album -> albums_string = albums_string + "${album.album_name} : ${album.id} \n"
@@ -78,17 +84,28 @@ class MainActivity : AppCompatActivity() {
 
             var records_string = ""
             records?.forEach {
-                record -> records_string = records_string + "${record.toString()} \n"
+                record -> records_string = records_string + "$record \n"
             }
 
             Handler(Looper.getMainLooper()).post{
-                stats.setText(stat_string)
-                records_text.setText(records_string)
-                artists_text.setText(artist_string)
-                albums_text.setText(albums_string)
+                stats.text = stat_string
+                records_text.text = records_string
+                artists_text.text = artist_string
+                albums_text.text = albums_string
+                songs_text.text = songs_string
             }
 
         })
+
+        clear.setOnClickListener{
+            Executors.newSingleThreadExecutor().execute{
+                MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.nukeArtists()
+                MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.nukeAlbums()
+                MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.nukeGenres()
+                MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.nukeSongs()
+                MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.nukeRecords()
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
