@@ -101,8 +101,8 @@ class MainActivity : AppCompatActivity() {
             dataModel = DataModel()
             dataModel!!.init()
             dataModel!!.setArtistData()
-
-
+            dataModel!!.setAlbumData()
+            dataModel!!.setSongsData()
         })
 
         clear.setOnClickListener{
