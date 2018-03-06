@@ -1,6 +1,7 @@
 package `in`.thetechguru.musiclogger.musiclogger.data_view_model.db
 
 import `in`.thetechguru.musiclogger.musiclogger.data_view_model.db.entities.*
+import `in`.thetechguru.musiclogger.musiclogger.data_view_model.model_classes.ArtistData
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy.*
@@ -71,7 +72,7 @@ interface MusicRecordsDao {
     @Insert(onConflict = REPLACE)
     fun insert(genre: Genre):Long
 
-    //query data
+    //query ArtistData
 
     @Query("SELECT id from genres where genre_name = :genre_name")
     fun getGenreId(genre_name:String):Long
@@ -84,6 +85,11 @@ interface MusicRecordsDao {
 
     @Query("SELECT id from albums where album_name = :album_name")
     fun getAlbumId(album_name:String):Long
+
+    @Query("SELECT artists.artist_name, music_records.approx_played_for, music_records.total_duration , songs.song_name, songs.id from music_records " +
+            "JOIN artists on music_records.artist_id = artists.id  " +
+            "JOIN songs on music_records.song_id = songs.id")
+    fun getArtistInfo():List<ArtistData>
 
     //nuke all tables
     @Query("DELETE from music_records")
@@ -100,5 +106,7 @@ interface MusicRecordsDao {
 
     @Query("DELETE from albums")
     fun nukeAlbums()
+
+
 
 }

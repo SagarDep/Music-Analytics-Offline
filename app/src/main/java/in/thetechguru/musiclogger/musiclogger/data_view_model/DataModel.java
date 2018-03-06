@@ -4,6 +4,13 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import java.sql.Time;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import in.thetechguru.musiclogger.musiclogger.MyApp;
 import in.thetechguru.musiclogger.musiclogger.data_view_model.db.MusicRecordsDB;
 import in.thetechguru.musiclogger.musiclogger.data_view_model.db.MusicRecordsDao;
@@ -13,6 +20,7 @@ import in.thetechguru.musiclogger.musiclogger.data_view_model.db.entities.Genre;
 import in.thetechguru.musiclogger.musiclogger.data_view_model.db.entities.MusicRecord;
 import in.thetechguru.musiclogger.musiclogger.data_view_model.db.entities.Song;
 import in.thetechguru.musiclogger.musiclogger.data_view_model.model_classes.MediaSessionMetaData;
+import in.thetechguru.musiclogger.musiclogger.data_view_model.model_classes.ArtistData;
 
 /**
  * Created by abami on 24-Feb-18.
@@ -43,6 +51,11 @@ import in.thetechguru.musiclogger.musiclogger.data_view_model.model_classes.Medi
 public class DataModel extends ViewModel{
 
     private MusicRecordsDao dbDao;
+    private HashMap<String, Long> artistPlayTime;
+    private HashMap<String, Integer> artistSongCount;
+    private HashMap<String, ArrayList<String>> artistSongList;
+    private HashMap<String, TimeTuple> artistPercentTime;
+
 
     @SuppressWarnings("ConstantConditions")
     public void init(){
@@ -61,8 +74,6 @@ public class DataModel extends ViewModel{
         Song song = new Song(mediaSessionMetaData.getTitle());
 
         String artist_name = mediaSessionMetaData.getArtist();
-        if(artist_name.equals(""))
-            artist_name = mediaSessionMetaData.getAlt_artist();
         Artist artist = new Artist(artist_name);
         Album album = new Album(mediaSessionMetaData.getAlbum());
         Genre genre = new Genre(mediaSessionMetaData.getGenre());
@@ -103,8 +114,105 @@ public class DataModel extends ViewModel{
         dbDao.insert(musicRecord);
     }
 
-    private void insertArtist(){
+
+    /**
+     * fill the 3 hashmaps to represent artist data
+     */
+    public void setArtistData(){
+        List<ArtistData> artistData =  dbDao.getArtistInfo();
+
+        artistPlayTime = new HashMap<>();
+        artistSongCount = new HashMap<>();
+        artistSongList = new HashMap<>();
+        artistPercentTime = new HashMap<>();
+
+        for(ArtistData artData: artistData){
+
+            //update overall play time for artist
+            if(artistPlayTime.containsKey(artData.artist_name)){
+                Long recalculatedDuration = artistPlayTime.get(artData.artist_name) + artData.approx_played_for;
+                artistPlayTime.put(artData.artist_name, recalculatedDuration);
+            }else {
+                artistPlayTime.put(artData.artist_name, artData.approx_played_for);
+            }
+
+            //update number of song for artist
+            if(artistSongList.containsKey(artData.artist_name)){
+                artistSongList.get(artData.artist_name).add(artData.song_name);
+            }else {
+                ArrayList<String> temp = new ArrayList<>();
+                temp.add(artData.song_name);
+                artistSongList.put(artData.artist_name, temp);
+            }
+
+
+            if(artistPercentTime.containsKey(artData.artist_name)){
+                Long newTotalDuration = artistPercentTime.get(artData.artist_name).totalTime + artData.total_duration;
+                Long newPlayedFor = artistPercentTime.get(artData.artist_name).playedTime + artData.approx_played_for;
+                artistPercentTime.put(artData.artist_name, new TimeTuple(newTotalDuration, newPlayedFor));
+            }else {
+                artistPercentTime.put(artData.artist_name, new TimeTuple(artData.total_duration, artData.approx_played_for));
+            }
+
+
+        }
+
+        for (Object o : artistSongList.entrySet()) {
+            Map.Entry pair = (Map.Entry) o;
+            System.out.println(pair.getKey() + " = " + pair.getValue());
+            artistSongCount.put(pair.getKey() + "", ((ArrayList<Long>) pair.getValue()).size());
+        }
+
+        Log.d("DataModel", "setArtistData: ");
 
     }
 
+    public HashMap<String, Long> getArtistPlayTime() {
+        if(artistPlayTime==null){
+            setArtistData();
+        }
+        return artistPlayTime;
+    }
+
+    public HashMap<String, ArrayList<String>> getArtistSongList() {
+        if(artistSongList==null){
+            setArtistData();
+        }
+        return artistSongList;
+    }
+
+    public HashMap<String, Integer> getArtistSongCount() {
+        if(artistSongCount==null){
+            setArtistData();
+        }
+        return artistSongCount;
+    }
+
+    public HashMap<String, TimeTuple> getArtistPercentTime() {
+        if(artistPercentTime==null){
+            setArtistData();
+        }
+        return artistPercentTime;
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        artistPlayTime = null;
+        artistSongCount = null;
+        artistSongList = null;
+        artistPercentTime = null;
+
+    }
+
+    class TimeTuple{
+
+        TimeTuple(Long totalTime, Long playedTime){
+            this.totalTime = totalTime;
+            this.playedTime = playedTime;
+        }
+
+        Long totalTime;
+        Long playedTime;
+    }
 }

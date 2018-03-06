@@ -20,6 +20,11 @@
         android:text="clear"
         tools:ignore="HardcodedText" />
 
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <TextView
         android:id="@+id/stats"
         android:layout_width="wrap_content"

@@ -91,7 +91,7 @@ public class ScrobblerService extends Service {
     }
 
     /**
-     * create flowable and start receiving changing meta data from media session callbacks
+     * create flowable and start receiving changing meta ArtistData from media session callbacks
      */
     @Override
     public void onCreate() {
@@ -100,8 +100,8 @@ public class ScrobblerService extends Service {
         MediaSessionManager manager = ((MediaSessionManager) getSystemService(Context.MEDIA_SESSION_SERVICE));
         if (manager != null) {
             disposable = observeMetadata(manager)
-                    //.debounce(5, TimeUnit.SECONDS)  //avoid multiple media changes to be propagated
-                    .sample(10, TimeUnit.SECONDS)    //sample latest from last 10 seconds, useful in case user is skipping songs
+                    .debounce(2, TimeUnit.SECONDS)  //avoid multiple media changes to be propagated
+                    //.sample(1, TimeUnit.SECONDS)    //sample latest from last 10 seconds, useful in case user is skipping songs
                     .observeOn(Schedulers.io())
                     .subscribeWith(new DisposableSubscriber<MediaSessionMetaData>() {
                         @Override
@@ -134,14 +134,20 @@ public class ScrobblerService extends Service {
 
     /**
      * push record on DB
-     * @param mediaSessionMetaData all the data we need to make entry in DB
+     * @param mediaSessionMetaData all the ArtistData we need to make entry in DB
      */
-    private void pushRecord(MediaSessionMetaData mediaSessionMetaData){
-        currentMediaMetaData.setApproxPlayTime();
-
-        Log.d("ScrobblerService", "pushRecord: " + currentMediaMetaData);
-        dataModel.pushRecord(currentMediaMetaData);
-
+    private void pushRecord(@NonNull MediaSessionMetaData mediaSessionMetaData){
+        if(currentMediaMetaData.isValidRecord()) {
+            Log.d("ScrobblerService", "pushRecord: " + currentMediaMetaData);
+            dataModel.pushRecord(currentMediaMetaData);
+            final String s = currentMediaMetaData.toString();
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(ScrobblerService.this, "Pushing " + s, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
         //update current media with latest one
         currentMediaMetaData = mediaSessionMetaData;
     }
@@ -153,6 +159,9 @@ public class ScrobblerService extends Service {
     public void onDestroy() {
         super.onDestroy();
         if(disposable!=null && !disposable.isDisposed()) disposable.dispose();
+        if(currentMediaMetaData!=null && currentMediaMetaData.isValidRecord()) {
+            dataModel.pushRecord(currentMediaMetaData);
+        }
         Toast.makeText(this, "Scrobbler turning off", Toast.LENGTH_SHORT).show();
         Log.d("ScrobblerService", "onDestroy: service destroyed");
         isServiceRunning = false;

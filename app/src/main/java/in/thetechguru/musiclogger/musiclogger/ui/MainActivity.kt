@@ -22,6 +22,7 @@ package `in`.thetechguru.musiclogger.musiclogger.ui
 
 import `in`.thetechguru.musiclogger.musiclogger.service.NotificationListener
 import `in`.thetechguru.musiclogger.musiclogger.R
+import `in`.thetechguru.musiclogger.musiclogger.data_view_model.DataModel
 import `in`.thetechguru.musiclogger.musiclogger.data_view_model.db.MusicRecordsDB
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -29,6 +30,7 @@ import android.widget.Toast
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
@@ -36,6 +38,9 @@ import java.util.concurrent.Executors
 
 
 class MainActivity : AppCompatActivity() {
+
+
+    private var dataModel: DataModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +56,7 @@ class MainActivity : AppCompatActivity() {
 
             //TestData.insertData()
 
-            //raw data show in text view in main activity
+            //raw ArtistData show in text view in main activity
 
             val songs = MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.getAllSongs()
             val artists = MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.getAllArtists()
@@ -93,6 +98,11 @@ class MainActivity : AppCompatActivity() {
                 songs_text.text = songs_string
             }
 
+            dataModel = DataModel()
+            dataModel!!.init()
+            dataModel!!.setArtistData()
+
+
         })
 
         clear.setOnClickListener{
@@ -104,6 +114,8 @@ class MainActivity : AppCompatActivity() {
                 MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.nukeRecords()
             }
         }
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
