@@ -20,6 +20,7 @@ import in.thetechguru.musiclogger.musiclogger.data_view_model.db.entities.Genre;
 import in.thetechguru.musiclogger.musiclogger.data_view_model.db.entities.MusicRecord;
 import in.thetechguru.musiclogger.musiclogger.data_view_model.db.entities.Song;
 import in.thetechguru.musiclogger.musiclogger.data_view_model.model_classes.AlbumData;
+import in.thetechguru.musiclogger.musiclogger.data_view_model.model_classes.Interval;
 import in.thetechguru.musiclogger.musiclogger.data_view_model.model_classes.MediaSessionMetaData;
 import in.thetechguru.musiclogger.musiclogger.data_view_model.model_classes.ArtistData;
 import in.thetechguru.musiclogger.musiclogger.data_view_model.model_classes.SongsData;
@@ -129,11 +130,10 @@ public class DataModel extends ViewModel{
         dbDao.insert(musicRecord);
     }
 
-
     /**
      * fill the 3 hashmaps to represent artist data
      */
-    public void setArtistData(){
+    public void setArtistData(Interval interval){
         List<ArtistData> artistData =  dbDao.getArtistInfo();
 
         artistPlayTime = new HashMap<>();
@@ -142,7 +142,6 @@ public class DataModel extends ViewModel{
         artistPercentTime = new HashMap<>();
 
         for(ArtistData artData: artistData){
-
             //update overall play time for artist
             if(artistPlayTime.containsKey(artData.artist_name)){
                 Long recalculatedDuration = artistPlayTime.get(artData.artist_name) + artData.approx_played_for;
@@ -160,7 +159,6 @@ public class DataModel extends ViewModel{
                 artistSongList.put(artData.artist_name, temp);
             }
 
-
             if(artistPercentTime.containsKey(artData.artist_name)){
                 Long newTotalDuration = artistPercentTime.get(artData.artist_name).totalTime + artData.total_duration;
                 Long newPlayedFor = artistPercentTime.get(artData.artist_name).playedTime + artData.approx_played_for;
@@ -168,8 +166,6 @@ public class DataModel extends ViewModel{
             }else {
                 artistPercentTime.put(artData.artist_name, new TimeTuple(artData.total_duration, artData.approx_played_for));
             }
-
-
         }
 
         for (Object o : artistSongList.entrySet()) {
@@ -179,37 +175,7 @@ public class DataModel extends ViewModel{
         }
 
         Log.d("DataModel", "setArtistData: ");
-
     }
-
-    public HashMap<String, Long> getArtistPlayTime() {
-        if(artistPlayTime==null){
-            setArtistData();
-        }
-        return artistPlayTime;
-    }
-
-    public HashMap<String, ArrayList<String>> getArtistSongList() {
-        if(artistSongList==null){
-            setArtistData();
-        }
-        return artistSongList;
-    }
-
-    public HashMap<String, Integer> getArtistSongCount() {
-        if(artistSongCount==null){
-            setArtistData();
-        }
-        return artistSongCount;
-    }
-
-    public HashMap<String, TimeTuple> getArtistPercentTime() {
-        if(artistPercentTime==null){
-            setArtistData();
-        }
-        return artistPercentTime;
-    }
-
 
     /**
      * fill the 3 hashmaps to represent artist data
@@ -263,34 +229,6 @@ public class DataModel extends ViewModel{
 
     }
 
-    public HashMap<String, Long> getAlbumPlayTime() {
-        if(albumPlayTime==null){
-            setAlbumData();
-        }
-        return albumPlayTime;
-    }
-
-    public HashMap<String, ArrayList<String>> getAlbumSongList() {
-        if(albumSongList==null){
-            setAlbumData();
-        }
-        return albumSongList;
-    }
-
-    public HashMap<String, Integer> getAlbumSongCount() {
-        if(albumSongCount==null){
-            setAlbumData();
-        }
-        return albumSongCount;
-    }
-
-    public HashMap<String, TimeTuple> getAlbumPercentTime() {
-        if(albumPercentTime==null){
-            setAlbumData();
-        }
-        return albumPercentTime;
-    }
-
     /**
      * fill the 3 hashmaps to represent artist data
      */
@@ -341,34 +279,6 @@ public class DataModel extends ViewModel{
 
         Log.d("DataModel", "setsongData: ");
 
-    }
-
-    public HashMap<String, Long> getSongsPlayTime() {
-        if(songPlayTime==null){
-            setSongsData();
-        }
-        return songPlayTime;
-    }
-
-    public HashMap<String, ArrayList<String>> getSongsSongList() {
-        if(songSongList==null){
-            setSongsData();
-        }
-        return songSongList;
-    }
-
-    public HashMap<String, Integer> getSongSongCount() {
-        if(songSongCount==null){
-            setSongsData();
-        }
-        return songSongCount;
-    }
-
-    public HashMap<String, TimeTuple> getSongPercentTime() {
-        if(albumPercentTime==null){
-            setSongsData();
-        }
-        return songPercentTime;
     }
 
     @Override

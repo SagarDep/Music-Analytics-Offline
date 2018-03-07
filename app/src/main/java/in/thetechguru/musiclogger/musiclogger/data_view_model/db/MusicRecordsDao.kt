@@ -37,7 +37,6 @@ This file is going to be Heart of this project
 interface MusicRecordsDao {
 
     //request bulk
-
     @Query("SELECT * from music_records")
     fun getAll(): List<MusicRecord>
 
@@ -75,7 +74,6 @@ interface MusicRecordsDao {
     fun insert(genre: Genre):Long
 
     //query ArtistData
-
     @Query("SELECT id from genres where genre_name = :genre_name")
     fun getGenreId(genre_name:String):Long
 
@@ -93,15 +91,33 @@ interface MusicRecordsDao {
             "JOIN songs on music_records.song_id = songs.id")
     fun getArtistInfo():List<ArtistData>
 
+    @Query("SELECT artists.artist_name, music_records.approx_played_for, music_records.total_duration , songs.song_name from music_records " +
+            "JOIN artists on music_records.artist_id = artists.id  " +
+            "JOIN songs on music_records.song_id = songs.id " +
+            "WHERE music_records.started_playing_at > :from and music_records.started_playing_at < :to" )
+    fun getArtistInfo(from:Long, to:Long):List<ArtistData>
+
     @Query("SELECT albums.album_name, music_records.approx_played_for, music_records.total_duration , songs.song_name from music_records " +
             "JOIN albums on music_records.album_id = albums.id  " +
             "JOIN songs on music_records.song_id = songs.id")
     fun getAlbumInfo():List<AlbumData>
 
+    @Query("SELECT albums.album_name, music_records.approx_played_for, music_records.total_duration , songs.song_name from music_records " +
+            "JOIN albums on music_records.album_id = albums.id  " +
+            "JOIN songs on music_records.song_id = songs.id " +
+            "WHERE music_records.started_playing_at > :from and music_records.started_playing_at < :to" )
+    fun getAlbumInfo(from:Long, to:Long):List<AlbumData>
+
     @Query("SELECT artists.artist_name, music_records.approx_played_for, music_records.total_duration , songs.song_name from music_records " +
             "JOIN artists on music_records.artist_id = artists.id  " +
             "JOIN songs on music_records.song_id = songs.id")
     fun getSongsInfo():List<SongsData>
+
+    @Query("SELECT artists.artist_name, music_records.approx_played_for, music_records.total_duration , songs.song_name from music_records " +
+            "JOIN artists on music_records.artist_id = artists.id  " +
+            "JOIN songs on music_records.song_id = songs.id " +
+            "WHERE music_records.started_playing_at > :from and music_records.started_playing_at < :to" )
+    fun getSongsInfo(from:Long, to:Long):List<SongsData>
 
     //nuke all tables
     @Query("DELETE from music_records")
@@ -118,7 +134,4 @@ interface MusicRecordsDao {
 
     @Query("DELETE from albums")
     fun nukeAlbums()
-
-
-
 }

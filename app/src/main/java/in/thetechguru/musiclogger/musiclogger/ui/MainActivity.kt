@@ -24,6 +24,7 @@ import `in`.thetechguru.musiclogger.musiclogger.service.NotificationListener
 import `in`.thetechguru.musiclogger.musiclogger.R
 import `in`.thetechguru.musiclogger.musiclogger.data_view_model.DataModel
 import `in`.thetechguru.musiclogger.musiclogger.data_view_model.db.MusicRecordsDB
+import `in`.thetechguru.musiclogger.musiclogger.data_view_model.model_classes.Interval
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
@@ -100,7 +101,7 @@ class MainActivity : AppCompatActivity() {
 
             dataModel = DataModel()
             dataModel!!.init()
-            dataModel!!.setArtistData()
+            dataModel!!.setArtistData(Interval(Interval.LIFETIME))
             dataModel!!.setAlbumData()
             dataModel!!.setSongsData()
         })
