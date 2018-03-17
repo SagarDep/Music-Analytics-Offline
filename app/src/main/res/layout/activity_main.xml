@@ -1,73 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start">
 
-<LinearLayout
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:context="in.thetechguru.musiclogger.musiclogger.ui.MainActivity">
-
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/clear"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="clear"
-        tools:ignore="HardcodedText" />
-
-    <com.github.mikephil.charting.charts.PieChart
-        android:id="@+id/chart"
+    <include
+        layout="@layout/app_bar_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <TextView
-        android:id="@+id/stats"
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginTop="8dp"
-        android:text="Hello World!" />
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_main"
+        app:menu="@menu/activity_main_drawer" />
 
-    <TextView
-        android:id="@+id/artists_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="Hello World!" />
-
-    <TextView
-        android:id="@+id/songs_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="Hello World!" />
-
-    <TextView
-        android:id="@+id/albums_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="Hello World!"
-        tools:layout_editor_absoluteX="154dp"
-        tools:layout_editor_absoluteY="36dp" />
-
-    <TextView
-        android:id="@+id/records_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="36dp"
-        android:text="Hello World!"/>
-
-
-</LinearLayout>
-
-
-</ScrollView>
+</android.support.v4.widget.DrawerLayout>

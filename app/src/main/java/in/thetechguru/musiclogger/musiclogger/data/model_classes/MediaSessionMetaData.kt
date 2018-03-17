@@ -1,4 +1,4 @@
-package `in`.thetechguru.musiclogger.musiclogger.data_view_model.model_classes
+package `in`.thetechguru.musiclogger.musiclogger.data.model_classes
 
 import android.media.MediaMetadata
 

@@ -1,9 +1,9 @@
-package `in`.thetechguru.musiclogger.musiclogger.data_view_model.db
+package `in`.thetechguru.musiclogger.musiclogger.data.db
 
-import `in`.thetechguru.musiclogger.musiclogger.data_view_model.db.entities.*
-import `in`.thetechguru.musiclogger.musiclogger.data_view_model.model_classes.AlbumData
-import `in`.thetechguru.musiclogger.musiclogger.data_view_model.model_classes.ArtistData
-import `in`.thetechguru.musiclogger.musiclogger.data_view_model.model_classes.SongsData
+import `in`.thetechguru.musiclogger.musiclogger.data.db.entities.*
+import `in`.thetechguru.musiclogger.musiclogger.data.model_classes.AlbumData
+import `in`.thetechguru.musiclogger.musiclogger.data.model_classes.ArtistData
+import `in`.thetechguru.musiclogger.musiclogger.data.model_classes.SongsData
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy.*

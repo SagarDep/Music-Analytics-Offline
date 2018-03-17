@@ -1,4 +1,4 @@
-package in.thetechguru.musiclogger.musiclogger.data_view_model.db.entities;
+package in.thetechguru.musiclogger.musiclogger.data.db.entities;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
@@ -6,7 +6,7 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
-import in.thetechguru.musiclogger.musiclogger.data_view_model.model_classes.MediaSessionMetaData;
+import in.thetechguru.musiclogger.musiclogger.data.model_classes.MediaSessionMetaData;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 

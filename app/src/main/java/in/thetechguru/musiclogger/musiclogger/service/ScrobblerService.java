@@ -42,16 +42,14 @@ import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import in.thetechguru.musiclogger.musiclogger.data_view_model.DataModel;
-import in.thetechguru.musiclogger.musiclogger.data_view_model.model_classes.MediaSessionMetaData;
+import in.thetechguru.musiclogger.musiclogger.data.DataModel;
+import in.thetechguru.musiclogger.musiclogger.data.model_classes.MediaSessionMetaData;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
 import io.reactivex.FlowableOnSubscribe;
-import io.reactivex.Scheduler;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Cancellable;
 import io.reactivex.schedulers.Schedulers;

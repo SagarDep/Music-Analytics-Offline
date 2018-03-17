@@ -1,6 +1,6 @@
-package `in`.thetechguru.musiclogger.musiclogger.data_view_model.db
+package `in`.thetechguru.musiclogger.musiclogger.data.db
 
-import `in`.thetechguru.musiclogger.musiclogger.data_view_model.db.entities.*
+import `in`.thetechguru.musiclogger.musiclogger.data.db.entities.*
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase

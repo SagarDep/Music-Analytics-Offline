@@ -22,30 +22,43 @@ package `in`.thetechguru.musiclogger.musiclogger.ui
 
 import `in`.thetechguru.musiclogger.musiclogger.service.NotificationListener
 import `in`.thetechguru.musiclogger.musiclogger.R
-import `in`.thetechguru.musiclogger.musiclogger.data_view_model.DataModel
-import `in`.thetechguru.musiclogger.musiclogger.data_view_model.db.MusicRecordsDB
-import `in`.thetechguru.musiclogger.musiclogger.data_view_model.model_classes.Interval
+import `in`.thetechguru.musiclogger.musiclogger.data.DataModel
+import `in`.thetechguru.musiclogger.musiclogger.data.db.MusicRecordsDB
+import `in`.thetechguru.musiclogger.musiclogger.data.model_classes.Interval
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
+import android.support.design.widget.NavigationView
+import android.support.v4.app.Fragment
+import android.support.v4.view.GravityCompat
+import android.support.v7.app.ActionBarDrawerToggle
 import android.view.Menu
 import android.view.MenuItem
-import kotlinx.android.synthetic.main.activity_main.*
 import java.util.concurrent.Executors
+import com.github.mikephil.charting.components.Legend
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.content_main.*
 
 
-class MainActivity : AppCompatActivity() {
-
+class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private var dataModel: DataModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setSupportActionBar(toolbar)
+
+        val toggle = ActionBarDrawerToggle(
+                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawer_layout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        nav_view.setNavigationItemSelectedListener(this)
 
         if(!NotificationListener.isListeningAuthorized(this)){
             val intent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
@@ -54,11 +67,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         Executors.newSingleThreadExecutor().execute({
-
-            //TestData.insertData()
-
-            //raw ArtistData show in text view in main activity
-
             val songs = MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.getAllSongs()
             val artists = MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.getAllArtists()
             val albums = MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.getAllAlbums()
@@ -91,32 +99,32 @@ class MainActivity : AppCompatActivity() {
                 record -> records_string = records_string + "$record \n"
             }
 
-            Handler(Looper.getMainLooper()).post{
-                stats.text = stat_string
-                records_text.text = records_string
-                artists_text.text = artist_string
-                albums_text.text = albums_string
-                songs_text.text = songs_string
-            }
-
             dataModel = DataModel()
             dataModel!!.init()
-            dataModel!!.setArtistData(Interval(Interval.LIFETIME))
-            dataModel!!.setAlbumData()
-            dataModel!!.setSongsData()
-        })
+            val data = dataModel!!.getArtistSongCount(Interval(Interval.LIFETIME))
 
-        clear.setOnClickListener{
-            Executors.newSingleThreadExecutor().execute{
-                MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.nukeArtists()
-                MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.nukeAlbums()
-                MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.nukeGenres()
-                MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.nukeSongs()
-                MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.nukeRecords()
+            Handler(Looper.getMainLooper()).post{
+
+                chart.description.isEnabled = false;
+
+                chart.centerText = "Amit"
+                chart.setCenterTextSize(20f)
+
+                // radius of the center hole in percent of maximum radius
+                chart.holeRadius = 45f
+                chart.transparentCircleRadius = 50f
+
+                val l = chart.getLegend()
+                l.verticalAlignment = Legend.LegendVerticalAlignment.TOP
+                l.horizontalAlignment = Legend.LegendHorizontalAlignment.RIGHT
+                l.orientation = Legend.LegendOrientation.VERTICAL
+                l.setDrawInside(false)
+
+                chart.data = data
+                chart.invalidate()
+                stats.text = stat_string
             }
-        }
-
-
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -141,5 +149,35 @@ class MainActivity : AppCompatActivity() {
 
 
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        displaySelectedScreen(item.itemId)
+        return true
+    }
+
+    private fun displaySelectedScreen(itemId: Int) {
+
+        //creating fragment object
+        var fragment: Fragment? = null
+
+        //initializing the fragment object which is selected
+        when (itemId) {
+            R.id.nav_music -> fragment = FragmentMusic()
+            R.id.nav_youtube -> fragment = FragmentYoutube()
+            R.id.nav_history -> fragment = FragmentHistory()
+            R.id.nav_artists -> fragment = FragmentArtists()
+            R.id.nav_about -> fragment = FragmentAbout()
+            R.id.nav_faq -> fragment = FragmentFaq()
+        }
+
+        //replacing the fragment
+        if (fragment != null) {
+            val ft = supportFragmentManager.beginTransaction()
+            ft.replace(R.id.container, fragment)
+            ft.commit()
+        }
+
+        drawer_layout.closeDrawer(GravityCompat.START)
     }
 }

@@ -2,7 +2,6 @@ package in.thetechguru.musiclogger.musiclogger;
 
 import android.app.Application;
 
-import com.facebook.stetho.Stetho;
 import com.squareup.leakcanary.LeakCanary;
 
 /**
@@ -38,8 +37,6 @@ public class MyApp extends Application {
             return;
         }
         LeakCanary.install(this);
-
-        Stetho.initializeWithDefaults(this);
     }
 
     public static MyApp getInstance(){

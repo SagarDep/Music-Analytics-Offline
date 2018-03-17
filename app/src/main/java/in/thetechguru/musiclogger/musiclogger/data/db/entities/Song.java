@@ -1,4 +1,4 @@
-package in.thetechguru.musiclogger.musiclogger.data_view_model.db.entities;
+package in.thetechguru.musiclogger.musiclogger.data.db.entities;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
@@ -27,20 +27,21 @@ import android.support.annotation.NonNull;
  *
  */
 
-@Entity(tableName = "artists", indices = {@Index(value = {"artist_name"}, unique = true)})
-public class Artist {
+@Entity(tableName = "songs", indices = {@Index(value = {"song_name"}, unique = true)})
+public class Song {
 
-        @PrimaryKey(autoGenerate = true)
-        @ColumnInfo(name = "id")
-        public long id;
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    public long id;
 
-        @ColumnInfo(name = "artist_name")
-        public String artist_name;
+    @ColumnInfo(name = "song_name")
+    public String song_name;
 
-        public Artist(){}
+    public Song(){}
 
-        @Ignore
-        public Artist(@NonNull String artist_name){
-                this.artist_name = artist_name;
-        }
+    @Ignore
+    public Song(@NonNull String song_name){
+        this.song_name = song_name;
+    }
+
 }

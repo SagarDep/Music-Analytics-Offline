@@ -1,4 +1,4 @@
-package in.thetechguru.musiclogger.musiclogger.data_view_model.model_classes;
+package in.thetechguru.musiclogger.musiclogger.data.model_classes;
 
 /**
  * Created by amit on 6/3/18.
