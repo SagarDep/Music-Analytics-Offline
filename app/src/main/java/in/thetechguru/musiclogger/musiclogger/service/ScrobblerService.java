@@ -44,8 +44,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import in.thetechguru.musiclogger.musiclogger.data.DataModel;
-import in.thetechguru.musiclogger.musiclogger.data.model_classes.MediaSessionMetaData;
+import in.thetechguru.musiclogger.musiclogger.datamodel.Repo;
+import in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.MediaSessionMetaData;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
@@ -69,7 +69,7 @@ public class ScrobblerService extends Service {
     //for maintaining currently playing media and sending it to db once media changes
     private MediaSessionMetaData currentMediaMetaData;
     private Disposable disposable;
-    private DataModel dataModel;
+    private Repo repo;
 
     private Handler handler;
 
@@ -124,8 +124,7 @@ public class ScrobblerService extends Service {
                 });
         }
         map = new HashMap<>();
-        dataModel = new DataModel();
-        dataModel.init();
+        repo = Repo.getRepo();
         handler = new Handler(getMainLooper());
         isServiceRunning = true;
     }
@@ -137,7 +136,7 @@ public class ScrobblerService extends Service {
     private void pushRecord(@NonNull MediaSessionMetaData mediaSessionMetaData){
         if(currentMediaMetaData.isValidRecord()) {
             Log.d("ScrobblerService", "pushRecord: " + currentMediaMetaData);
-            dataModel.pushRecord(currentMediaMetaData);
+            repo.pushRecord(currentMediaMetaData);
             final String s = currentMediaMetaData.toString();
             handler.post(new Runnable() {
                 @Override
@@ -158,7 +157,7 @@ public class ScrobblerService extends Service {
         super.onDestroy();
         if(disposable!=null && !disposable.isDisposed()) disposable.dispose();
         if(currentMediaMetaData!=null && currentMediaMetaData.isValidRecord()) {
-            dataModel.pushRecord(currentMediaMetaData);
+            repo.pushRecord(currentMediaMetaData);
         }
         Toast.makeText(this, "Scrobbler turning off", Toast.LENGTH_SHORT).show();
         Log.d("ScrobblerService", "onDestroy: service destroyed");
@@ -197,7 +196,7 @@ public class ScrobblerService extends Service {
                                     public void onMetadataChanged(@Nullable final MediaMetadata metadata) {
                                         super.onMetadataChanged(metadata);
                                         if (metadata != null) {
-                                            Log.d("onMetadataChanged", "Artist: " + metadata.getString(MediaMetadata.METADATA_KEY_ARTIST));
+                                            Log.d("onMetadataChanged", "ArtistLastFm: " + metadata.getString(MediaMetadata.METADATA_KEY_ARTIST));
 
                                             //filters will come here eventually after monitoring metadata changes for various packages
                                             String artist = metadata.getString(MediaMetadata.METADATA_KEY_ARTIST);
