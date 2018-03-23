@@ -3,4 +3,29 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string-array name="most_heard">
+        <item>Artist</item>
+        <item>Song</item>
+        <item>Album</item>
+        <item>Genre</item>
+    </string-array>
+
+    <string-array name="show">
+        <item>Play time</item>
+        <item>Play count</item>
+        <item>Play percentage</item>
+    </string-array>
+
+    <string-array name="for_interval">
+        <item>Today</item>
+        <item>Yesterday</item>
+        <item>Last 7 days</item>
+        <item>Last 30 days</item>
+        <item>Last month</item>
+        <item>Lifetime</item>
+        <item>Custom</item>
+    </string-array>
+
+
 </resources>

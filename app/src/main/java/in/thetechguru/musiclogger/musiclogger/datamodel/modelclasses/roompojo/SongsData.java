@@ -2,7 +2,7 @@ package in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo;
 
 /**
  * Created by abami on 06-Mar-18.
- * Model class for storing song data returned from query
+ * Model class for storing song data returned fromEpoch query
  */
 
 public class SongsData {

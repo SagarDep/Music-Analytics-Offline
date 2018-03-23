@@ -29,13 +29,13 @@ public class Similar {
 
     @SerializedName("artist")
     @Expose
-    private List<Artist_> artist = null;
+    private List<SimilarArtists> artist = null;
 
-    public List<Artist_> getArtist() {
+    public List<SimilarArtists> getArtist() {
         return artist;
     }
 
-    public void setArtist(List<Artist_> artist) {
+    public void setArtist(List<SimilarArtists> artist) {
         this.artist = artist;
     }
 

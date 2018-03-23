@@ -66,7 +66,7 @@ public class ScrobblerService extends Service {
     private Binder mBinder;
     public static boolean isServiceRunning = false;
 
-    //for maintaining currently playing media and sending it to db once media changes
+    //for maintaining currently playing media and sending it toEpoch db once media changes
     private MediaSessionMetaData currentMediaMetaData;
     private Disposable disposable;
     private Repo repo;
@@ -89,7 +89,7 @@ public class ScrobblerService extends Service {
     }
 
     /**
-     * create flowable and start receiving changing meta ArtistData from media session callbacks
+     * create flowable and start receiving changing meta ArtistData fromEpoch media session callbacks
      */
     @Override
     public void onCreate() {
@@ -98,8 +98,8 @@ public class ScrobblerService extends Service {
         MediaSessionManager manager = ((MediaSessionManager) getSystemService(Context.MEDIA_SESSION_SERVICE));
         if (manager != null) {
             disposable = observeMetadata(manager)
-                    .debounce(2, TimeUnit.SECONDS)  //avoid multiple media changes to be propagated
-                    //.sample(1, TimeUnit.SECONDS)    //sample latest from last 10 seconds, useful in case user is skipping songs
+                    .debounce(2, TimeUnit.SECONDS)  //avoid multiple media changes toEpoch be propagated
+                    //.sample(1, TimeUnit.SECONDS)    //sample latest fromEpoch last 10 seconds, useful in case user is skipping songs
                     .observeOn(Schedulers.io())
                     .subscribeWith(new DisposableSubscriber<MediaSessionMetaData>() {
                         @Override
@@ -131,7 +131,7 @@ public class ScrobblerService extends Service {
 
     /**
      * push record on DB
-     * @param mediaSessionMetaData all the ArtistData we need to make entry in DB
+     * @param mediaSessionMetaData all the ArtistData we need toEpoch make entry in DB
      */
     private void pushRecord(@NonNull MediaSessionMetaData mediaSessionMetaData){
         if(currentMediaMetaData.isValidRecord()) {

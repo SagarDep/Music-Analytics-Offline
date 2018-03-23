@@ -66,6 +66,9 @@ dependencies {
     // JSON Parsing
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+
+    //date picker (cause date ain't gonna pick itself)
+    compile 'com.borax12.materialdaterangepicker:library:1.9'
 }
 
 

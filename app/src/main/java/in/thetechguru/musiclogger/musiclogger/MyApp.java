@@ -5,8 +5,8 @@ import android.app.Application;
 import com.squareup.leakcanary.LeakCanary;
 
 /**
- * Created by amit on 19/2/18.
- * *  * This file is part of Music Logger
+ *  * Created by amit on 19/2/18.
+ *  * This file is part of Music Logger
  *  * Copyright © 2017 Music Logger
  *  *
  *  * Music Logger is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ public class MyApp extends Application {
         super.onCreate();
         instance = this;
         if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
+            // This process is dedicated toEpoch LeakCanary for heap analysis.
             // You should not init your app in this process.
             return;
         }

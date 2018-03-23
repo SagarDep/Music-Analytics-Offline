@@ -22,38 +22,23 @@ package `in`.thetechguru.musiclogger.musiclogger.view
 
 import `in`.thetechguru.musiclogger.musiclogger.service.NotificationListener
 import `in`.thetechguru.musiclogger.musiclogger.R
-import `in`.thetechguru.musiclogger.musiclogger.datamodel.api.ApiUtil
-import `in`.thetechguru.musiclogger.musiclogger.viewmodel.MainDataModel
-import `in`.thetechguru.musiclogger.musiclogger.datamodel.db.MusicRecordsDB
-import `in`.thetechguru.musiclogger.musiclogger.datamodel.db.entities.Artist
-import `in`.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.apipojo.ArtistLastFm
-import `in`.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.apipojo.Artistt
-import `in`.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.Interval
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import android.content.Intent
-import android.os.Handler
-import android.os.Looper
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.view.Menu
 import android.view.MenuItem
-import java.util.concurrent.Executors
-import com.github.mikephil.charting.components.Legend
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.content_main.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 
-class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
 
-    private var dataModel: MainDataModel? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,88 +51,18 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
+        nav_view.setCheckedItem(R.id.nav_music)
+        displaySelectedScreen(R.id.nav_music)
 
         if(!NotificationListener.isListeningAuthorized(this)){
             val intent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
             startActivity(intent)
-            Toast.makeText(this, "Click on Music Logger to enable!", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Click on Music Logger toEpoch enable!", Toast.LENGTH_LONG).show()
         }
-
-        Executors.newSingleThreadExecutor().execute({
-            val songs = MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.getAllSongs()
-            val artists = MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.getAllArtists()
-            val albums = MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.getAllAlbums()
-            val genres = MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.getAllGenres()
-            val records = MusicRecordsDB.getInstance(applicationContext)?.MusicRecordDAO()?.getAll()
-
-            val stat_string = "Total records : ${records?.size} \n Total artists : ${artists?.size} " +
-                    "\n Total albums : ${albums?.size} " +
-                    "\n Total songs : ${songs?.size} " +
-                    "\n Total genre : ${genres?.size} \n"
-
-            var artist_string = ""
-            artists?.forEach {
-                artist -> artist_string = artist_string + "${artist.artist_name} : ${artist.id} \n"
-            }
-
-            var songs_string = ""
-            songs?.forEach {
-                song -> songs_string = songs_string + "${song.song_name} : ${song.id} \n"
-            }
-
-
-            var albums_string = ""
-            albums?.forEach {
-                album -> albums_string = albums_string + "${album.album_name} : ${album.id} \n"
-            }
-
-            var records_string = ""
-            records?.forEach {
-                record -> records_string = records_string + "$record \n"
-            }
-
-            dataModel = MainDataModel()
-            dataModel!!.init()
-            val data = dataModel!!.getArtistSongCount(Interval(Interval.LIFETIME))
-
-            Handler(Looper.getMainLooper()).post{
-
-                chart.description.isEnabled = false;
-
-                chart.centerText = "Amit"
-                chart.setCenterTextSize(20f)
-
-                // radius of the center hole in percent of maximum radius
-                chart.holeRadius = 45f
-                chart.transparentCircleRadius = 50f
-
-                val l = chart.getLegend()
-                l.verticalAlignment = Legend.LegendVerticalAlignment.TOP
-                l.horizontalAlignment = Legend.LegendHorizontalAlignment.RIGHT
-                l.orientation = Legend.LegendOrientation.VERTICAL
-                l.setDrawInside(false)
-
-                chart.data = data
-                chart.invalidate()
-                stats.text = stat_string
-            }
-
-            ApiUtil.getAPIService().getArtist("eminem").enqueue(object : Callback<Artistt> {
-                override fun onFailure(call: Call<Artistt>?, t: Throwable?) {
-                    println(call.toString())
-                }
-
-                override fun onResponse(call: Call<Artistt>?, response: Response<Artistt>?) {
-                    println(call.toString())
-                    val artist = response?.body()
-                    println(response?.body())
-                }
-            })
-        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu; this adds items toEpoch the action bar if it is present.
         menuInflater.inflate(R.menu.activity_main, menu)
         return true
     }
@@ -187,7 +102,10 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_history -> fragment = FragmentHistory()
             R.id.nav_artists -> fragment = FragmentArtists()
             R.id.nav_about -> fragment = FragmentAbout()
-            R.id.nav_faq -> fragment = FragmentFaq()
+            R.id.nav_faq -> {
+                fragment = FragmentFaq()
+                return
+            }
         }
 
         //replacing the fragment

@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by abami on 20-Mar-18.
  */
 
-public class Artistt {
+public class ArtistWrapper {
     @SerializedName("artist")
     @Expose
     private ArtistLastFm artist;

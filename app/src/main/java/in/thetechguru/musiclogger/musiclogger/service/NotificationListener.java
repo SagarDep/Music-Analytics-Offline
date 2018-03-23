@@ -91,9 +91,9 @@ public class NotificationListener extends android.service.notification.Notificat
     }
 
     /**
-     * check if permission is there to read notifications
+     * check if permission is there toEpoch read notifications
      * @param context If you are android developer and you don't know context, may god bless you
-     * @return boolean status about permission
+     * @return boolean interval_status about permission
      */
     public static boolean isListeningAuthorized(Context context) {
         ContentResolver contentResolver = context.getContentResolver();
@@ -104,9 +104,9 @@ public class NotificationListener extends android.service.notification.Notificat
     }
 
     /**
-     * Check if background service for reading media sessions and pushing data to DB is running
+     * Check if background service for reading media sessions and pushing data toEpoch DB is running
      * @param context context
-     * @return status
+     * @return interval_status
      */
     public static boolean isAppScrobbling(Context context) {
         Log.d("NotificationListener", "isAppScrobbling: " + ScrobblerService.isServiceRunning);

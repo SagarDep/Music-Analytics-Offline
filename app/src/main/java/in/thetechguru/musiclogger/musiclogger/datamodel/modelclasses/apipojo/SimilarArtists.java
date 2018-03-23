@@ -25,7 +25,7 @@ import java.util.List;
  *
  */
 
-public class Artist_ {
+public class SimilarArtists {
 
     @SerializedName("name")
     @Expose

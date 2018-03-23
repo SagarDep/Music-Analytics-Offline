@@ -17,6 +17,7 @@ import in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.Al
 import in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.ArtistData;
 import in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.MediaSessionMetaData;
 import in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.SongsData;
+import in.thetechguru.musiclogger.musiclogger.helpers.StatConfig;
 
 
 /**
@@ -59,7 +60,7 @@ public class Repo {
 
     /**
      * push music record in table
-     * @param mediaSessionMetaData - everything we are going to need to make entry
+     * @param mediaSessionMetaData - everything we are going toEpoch need toEpoch make entry
      *                             in table is enclosed in this model class
      *                             Check MediaSessionMetaData model class for more
      */
@@ -101,21 +102,33 @@ public class Repo {
             musicRecord.genre_id = genre_id;
         }
 
-        Log.d("MainDataModel", "pushRecord: " + musicRecord);
+        Log.d("ActivityMainDataModel", "pushRecord: " + musicRecord);
 
         //insert actual record
         dbDao.insert(musicRecord);
     }
 
-    public List<ArtistData> getArtistInfo(){
-        return dbDao.getArtistInfo();
+    public List<ArtistData> getArtistInfo(StatConfig statConfig){
+        if(statConfig.interval_status == StatConfig.LIFETIME) {
+            return dbDao.getArtistInfo();
+        }else {
+            return dbDao.getArtistInfo(statConfig.fromEpoch, statConfig.toEpoch);
+        }
     }
 
-    public List<AlbumData> getAlbumsInfo(){
-        return dbDao.getAlbumInfo();
+    public List<AlbumData> getAlbumsInfo(StatConfig statConfig){
+        if(statConfig.interval_status == StatConfig.LIFETIME) {
+            return dbDao.getAlbumInfo();
+        }else {
+            return dbDao.getAlbumInfo(statConfig.fromEpoch, statConfig.toEpoch);
+        }
     }
 
-    public List<SongsData> getSongsInfo(){
-        return dbDao.getSongsInfo();
+    public List<SongsData> getSongsInfo(StatConfig statConfig){
+        if(statConfig.interval_status == StatConfig.LIFETIME) {
+            return dbDao.getSongsInfo();
+        }else {
+            return dbDao.getSongsInfo(statConfig.fromEpoch, statConfig.toEpoch);
+        }
     }
 }

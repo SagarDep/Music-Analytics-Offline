@@ -4,7 +4,7 @@ import android.media.MediaMetadata
 
 /**
  * Created by abami on 23-Feb-18.
- * custom model class which will be used to keep track of currently playing media
+ * custom model class which will be used toEpoch keep track of currently playing media
  */
 data class MediaSessionMetaData(var package_name: String = ""
                                 ,var title:String = ""
@@ -12,8 +12,8 @@ data class MediaSessionMetaData(var package_name: String = ""
                                 , var album: String = ""
                                 , var genre: String = ""
                                 , var total_duration: Long = 0L
-                                , var started_playing_at: Long = 0L//custom field tried to generate from media session callbacks
-                                , var approx_played_for: Long = 0L //custom field tried to generate from media session callbacks
+                                , var started_playing_at: Long = 0L//custom field tried toEpoch generate fromEpoch media session callbacks
+                                , var approx_played_for: Long = 0L //custom field tried toEpoch generate fromEpoch media session callbacks
                                 )
 {
 
@@ -36,9 +36,9 @@ data class MediaSessionMetaData(var package_name: String = ""
     }
 
     /**
-     * set approximate play time before pushing record to DB
-     * Its done by subtracting current time from the time when media was started
-     * It is approximate and I need to figure out way to increase its accuracy
+     * set approximate play time before pushing record toEpoch DB
+     * Its done by subtracting current time fromEpoch the time when media was started
+     * It is approximate and I need toEpoch figure out way toEpoch increase its accuracy
      */
     private fun setApproxPlayTime(){
         val current_time = System.currentTimeMillis()
@@ -51,7 +51,7 @@ data class MediaSessionMetaData(var package_name: String = ""
     }
 
     /*
-    simple sanitary check to make sure ArtistData is good enough to be put in db
+    simple sanitary check toEpoch make sure ArtistData is good enough toEpoch be put in db
     @todo refine this later
      */
     fun isValidRecord(): Boolean{
