@@ -20,12 +20,16 @@ package `in`.thetechguru.musiclogger.musiclogger.view
  *
  */
 
+import `in`.thetechguru.musiclogger.musiclogger.MyApp
 import `in`.thetechguru.musiclogger.musiclogger.service.NotificationListener
 import `in`.thetechguru.musiclogger.musiclogger.R
+import `in`.thetechguru.musiclogger.musiclogger.tasks.GetCSV
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import android.content.Intent
+import android.content.SharedPreferences
+import android.preference.PreferenceManager
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
@@ -79,6 +83,19 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     val intent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
                     startActivity(intent)
                 }
+            R.id.action_export -> {
+                if(!GetCSV.isTaskRunning) GetCSV().execute()
+            }
+            R.id.action_toggle_toast -> {
+                val pref = PreferenceManager.getDefaultSharedPreferences(MyApp.getInstance())
+                if(pref.getBoolean(MyApp.getInstance().getString(R.string.pref_toast), true)){
+                    pref.edit().putBoolean(MyApp.getInstance().getString(R.string.pref_toast), false).apply()
+                    Toast.makeText(MyApp.getInstance(), "Turned off", Toast.LENGTH_SHORT).show()
+                }else{
+                    pref.edit().putBoolean(MyApp.getInstance().getString(R.string.pref_toast), true).apply()
+                    Toast.makeText(MyApp.getInstance(), "Turned on", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
 

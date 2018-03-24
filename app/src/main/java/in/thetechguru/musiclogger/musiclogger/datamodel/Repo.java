@@ -15,6 +15,7 @@ import in.thetechguru.musiclogger.musiclogger.datamodel.db.entities.MusicRecord;
 import in.thetechguru.musiclogger.musiclogger.datamodel.db.entities.Song;
 import in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.AlbumData;
 import in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.ArtistData;
+import in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.CsvRecord;
 import in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.MediaSessionMetaData;
 import in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.SongsData;
 import in.thetechguru.musiclogger.musiclogger.helpers.StatConfig;
@@ -130,5 +131,9 @@ public class Repo {
         }else {
             return dbDao.getSongsInfo(statConfig.fromEpoch, statConfig.toEpoch);
         }
+    }
+
+    public List<CsvRecord> getCSVRecords(){
+        return dbDao.getCsvData();
     }
 }

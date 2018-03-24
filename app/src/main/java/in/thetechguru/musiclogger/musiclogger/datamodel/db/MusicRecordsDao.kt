@@ -3,6 +3,7 @@ package `in`.thetechguru.musiclogger.musiclogger.datamodel.db
 import `in`.thetechguru.musiclogger.musiclogger.datamodel.db.entities.*
 import `in`.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.AlbumData
 import `in`.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.ArtistData
+import `in`.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.CsvRecord
 import `in`.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.SongsData
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
@@ -118,6 +119,16 @@ interface MusicRecordsDao {
             "JOIN songs on music_records.song_id = songs.id " +
             "WHERE music_records.started_playing_at > :from and music_records.started_playing_at < :to" )
     fun getSongsInfo(from:Long, to:Long):List<SongsData>
+
+    @Query("SELECT music_records.package_name, songs.song_name, " +
+            "artists.artist_name, albums.album_name, genres.genre_name, " +
+            "music_records.total_duration, music_records.approx_played_for, music_records.started_playing_at " +
+            "from music_records " +
+            "JOIN artists on music_records.artist_id = artists.id  " +
+            "JOIN songs on music_records.song_id = songs.id " +
+            "JOIN albums on music_records.album_id = albums.id " +
+            "JOIN genres on music_records.genre_id = genres.id " )
+    fun getCsvData():List<CsvRecord>
 
     //nuke all tables
     @Query("DELETE from music_records")

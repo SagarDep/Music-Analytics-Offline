@@ -34,6 +34,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -44,6 +45,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import in.thetechguru.musiclogger.musiclogger.MyApp;
+import in.thetechguru.musiclogger.musiclogger.R;
 import in.thetechguru.musiclogger.musiclogger.datamodel.Repo;
 import in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.MediaSessionMetaData;
 import io.reactivex.BackpressureStrategy;
@@ -141,7 +144,9 @@ public class ScrobblerService extends Service {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(ScrobblerService.this, "Pushing " + s, Toast.LENGTH_SHORT).show();
+                    if(PreferenceManager.getDefaultSharedPreferences(MyApp.getInstance())
+                            .getBoolean(MyApp.getInstance().getString(R.string.pref_toast), true))
+                        Toast.makeText(ScrobblerService.this, "Pushing " + s, Toast.LENGTH_SHORT).show();
                 }
             });
         }
