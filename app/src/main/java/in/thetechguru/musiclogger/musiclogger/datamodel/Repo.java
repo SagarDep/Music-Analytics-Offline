@@ -6,19 +6,32 @@ import android.util.Log;
 import java.util.List;
 
 import in.thetechguru.musiclogger.musiclogger.MyApp;
+import in.thetechguru.musiclogger.musiclogger.datamodel.api.ApiUtil;
+import in.thetechguru.musiclogger.musiclogger.datamodel.api.ArtistInfoAPIService;
+import in.thetechguru.musiclogger.musiclogger.datamodel.db.ArtistInfoDAO;
+import in.thetechguru.musiclogger.musiclogger.datamodel.db.ArtistInfoDB;
 import in.thetechguru.musiclogger.musiclogger.datamodel.db.MusicRecordsDB;
 import in.thetechguru.musiclogger.musiclogger.datamodel.db.MusicRecordsDao;
 import in.thetechguru.musiclogger.musiclogger.datamodel.db.entities.Album;
 import in.thetechguru.musiclogger.musiclogger.datamodel.db.entities.Artist;
+import in.thetechguru.musiclogger.musiclogger.datamodel.db.entities.ArtistInfo;
 import in.thetechguru.musiclogger.musiclogger.datamodel.db.entities.Genre;
 import in.thetechguru.musiclogger.musiclogger.datamodel.db.entities.MusicRecord;
 import in.thetechguru.musiclogger.musiclogger.datamodel.db.entities.Song;
+import in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.apipojo.ArtistLastFm;
+import in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.apipojo.ArtistWrapper;
 import in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.AlbumData;
 import in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.ArtistData;
 import in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.CsvRecord;
 import in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.MediaSessionMetaData;
 import in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.SongsData;
 import in.thetechguru.musiclogger.musiclogger.helpers.StatConfig;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
@@ -48,10 +61,14 @@ public class Repo {
 
     private static Repo instance;
     private MusicRecordsDao dbDao;
+    private ArtistInfoDAO artInfoDbDao;
+    private ArtistInfoAPIService artistInfoAPIService;
 
     @SuppressWarnings("ConstantConditions")
     private Repo(){
+        artInfoDbDao = ArtistInfoDB.getInstance(MyApp.getInstance()).ArtistInfoDAO();
         dbDao = MusicRecordsDB.getInstance(MyApp.getInstance()).MusicRecordDAO();
+        artistInfoAPIService = ApiUtil.getAPIService();
     }
 
     public static Repo getRepo(){
@@ -135,5 +152,43 @@ public class Repo {
 
     public List<CsvRecord> getCSVRecords(){
         return dbDao.getCsvData();
+    }
+
+    public Observable<ArtistInfo> getArtistInfo(final String[] artists){
+
+
+        return Observable.create(new ObservableOnSubscribe<ArtistInfo>() {
+            @Override
+            public void subscribe(final ObservableEmitter<ArtistInfo> emitter) throws Exception {
+
+                for(String artist: artists ) {
+                    List<ArtistInfo> artistInfos = artInfoDbDao.getArtistLastFMBio(artist);
+
+                    if (artistInfos.size() != 0) {
+                        emitter.onNext(artistInfos.get(0));
+                        continue;
+                    }
+
+                    Response<ArtistWrapper> response = artistInfoAPIService.getArtist(artist).execute();
+                    if (!response.isSuccessful() || response.body() == null) {
+                        emitter.onError(new Throwable("Invalid Response"));
+                        return;
+                    }
+                    ArtistLastFm artistLastFm = response.body().getArtist();
+                    ArtistInfo artistInfo = new ArtistInfo();
+                    artistInfo.original_artist = artist;
+                    artistInfo.corrected_artist = artistLastFm.getName();
+                    artistInfo.artist_image_big = artistLastFm.getImage().get(3).getText();
+                    artistInfo.artist_image_thumb = artistLastFm.getImage().get(0).getText();
+                    artistInfo.artist_info = artistLastFm.getBio().getContent();
+                    artistInfo.artist_url = artistLastFm.getUrl();
+                    artistInfo.mbid = artistLastFm.getMbid();
+                    artistInfo.tags = artistLastFm.getTags().getTag();
+                    emitter.onNext(artistInfo);
+                }
+
+                emitter.onComplete();
+            }
+        });
     }
 }

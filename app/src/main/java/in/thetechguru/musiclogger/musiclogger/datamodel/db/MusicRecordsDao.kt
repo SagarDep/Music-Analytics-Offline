@@ -73,7 +73,6 @@ interface MusicRecordsDao {
 
     @Insert(onConflict = REPLACE)
     fun insert(genre: Genre):Long
-
     //query ArtistData
     @Query("SELECT id from genres where genre_name = :genre_name")
     fun getGenreId(genre_name:String):Long

@@ -1,6 +1,7 @@
 package in.thetechguru.musiclogger.musiclogger.datamodel.api;
 
 import in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.apipojo.ArtistWrapper;
+import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;

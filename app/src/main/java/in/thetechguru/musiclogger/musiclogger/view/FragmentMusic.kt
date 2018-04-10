@@ -1,14 +1,15 @@
 package `in`.thetechguru.musiclogger.musiclogger.view
 
 import `in`.thetechguru.musiclogger.musiclogger.R
-import `in`.thetechguru.musiclogger.musiclogger.datamodel.api.ApiUtil
-import `in`.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.apipojo.ArtistWrapper
 import `in`.thetechguru.musiclogger.musiclogger.helpers.StatConfig
 import `in`.thetechguru.musiclogger.musiclogger.viewmodel.ActivityMainDataModel
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,11 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.borax12.materialdaterangepicker.date.DatePickerDialog
 import com.github.mikephil.charting.components.Legend
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.internal.disposables.DisposableContainer
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_music.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -31,15 +37,26 @@ import java.util.concurrent.Executors
 class FragmentMusic: Fragment(), DatePickerDialog.OnDateSetListener  {
 
     private var dataModel: ActivityMainDataModel? = null
-
     private var statConfig: StatConfig = StatConfig()
+    private var compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        dataModel = ViewModelProviders.of(activity).get(ActivityMainDataModel::class.java)
+        dataModel!!.init()
+
+        compositeDisposable.add(dataModel!!.getArtistInfo(arrayOf("Enrique Iglesias"))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe{
+                    artistInfo -> Log.d("TAG", artistInfo.corrected_artist)
+                })
+
         return inflater?.inflate(R.layout.fragment_music, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val adapterMostHeard = ArrayAdapter.createFromResource(context,
                 R.array.most_heard, android.R.layout.simple_spinner_item)
         adapterMostHeard.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -150,8 +167,6 @@ class FragmentMusic: Fragment(), DatePickerDialog.OnDateSetListener  {
 
     private fun populateChart(statConfig: StatConfig) {
         Executors.newSingleThreadExecutor().execute({
-            dataModel = ActivityMainDataModel()
-            dataModel!!.init()
 
             val data = dataModel!!.getPieData(statConfig)
 
@@ -173,10 +188,20 @@ class FragmentMusic: Fragment(), DatePickerDialog.OnDateSetListener  {
                 l.orientation = Legend.LegendOrientation.VERTICAL
                 l.setDrawInside(false)
 
+                chart.animateX(1000)
+                chart.animateY(1000)
                 chart.data = data
                 chart.invalidate()
             }
-
         })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.clear()
     }
 }

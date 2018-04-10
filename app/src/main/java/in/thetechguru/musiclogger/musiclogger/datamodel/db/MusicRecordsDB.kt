@@ -4,6 +4,7 @@ import `in`.thetechguru.musiclogger.musiclogger.datamodel.db.entities.*
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
+import android.arch.persistence.room.TypeConverters
 import android.content.Context
 
 /**
@@ -44,6 +45,7 @@ abstract class MusicRecordsDB : RoomDatabase() {
                 synchronized(MusicRecordsDB::class){
                     instance = Room.databaseBuilder(context.applicationContext
                             ,MusicRecordsDB::class.java, "music_record.db")
+                            .fallbackToDestructiveMigration()
                             .build()
                 }
             }

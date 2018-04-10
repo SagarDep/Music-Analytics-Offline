@@ -20,30 +20,12 @@ import java.util.List;
 import java.util.Map;
 
 import in.thetechguru.musiclogger.musiclogger.datamodel.Repo;
+import in.thetechguru.musiclogger.musiclogger.datamodel.db.entities.ArtistInfo;
 import in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.AlbumData;
 import in.thetechguru.musiclogger.musiclogger.helpers.StatConfig;
 import in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.ArtistData;
 import in.thetechguru.musiclogger.musiclogger.datamodel.modelclasses.roompojo.SongsData;
-
-/**
- * Created by abami on 24-Feb-18.
- * *  * This file is part of Music Logger
- *  * Copyright © 2017 Music Logger
- *  *
- *  * Music Logger is free software: you can redistribute it and/or modify
- *  * it under the terms of the GNU General Public License as published by
- *  * the Free Software Foundation, either version 3 of the License, or
- *  * (at your option) any later version.
- *  *
- *  * Music Logger is distributed in the hope that it will be useful,
- *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  * GNU General Public License for more details.
- *  * You should have received a copy of the GNU General Public License
- *  * along with Music Logger.  If not, see <http://www.gnu.org/licenses/>.
- *
- *
- */
+import io.reactivex.Observable;
 
 /**
  * Data model of whole application
@@ -125,6 +107,10 @@ public class ActivityMainDataModel extends ViewModel{
 
         //if not returned by now, return default thing
         return getArtistPlayTime(statConfig);
+    }
+
+    public Observable<ArtistInfo> getArtistInfo(String[] artists){
+        return repoInstance.getArtistInfo(artists);
     }
 
     /**
@@ -296,7 +282,6 @@ public class ActivityMainDataModel extends ViewModel{
 
     }
 
-
     private PieData getArtistPlayTime(StatConfig statConfig) {
         if(artistPlayTime==null || !this.statConfig.equals(statConfig)){
             this.statConfig = statConfig;
@@ -443,9 +428,6 @@ public class ActivityMainDataModel extends ViewModel{
         Long totalTime;
         Long playedTime;
     }
-
-
-    //useless as of now, will see later
 
     @Override
     protected void onCleared() {

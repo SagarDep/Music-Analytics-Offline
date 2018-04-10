@@ -23,12 +23,11 @@ package `in`.thetechguru.musiclogger.musiclogger.view
 import `in`.thetechguru.musiclogger.musiclogger.MyApp
 import `in`.thetechguru.musiclogger.musiclogger.service.NotificationListener
 import `in`.thetechguru.musiclogger.musiclogger.R
-import `in`.thetechguru.musiclogger.musiclogger.tasks.GetCSV
+import `in`.thetechguru.musiclogger.musiclogger.tasks.ExportCSV
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import android.content.Intent
-import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
@@ -84,7 +83,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     startActivity(intent)
                 }
             R.id.action_export -> {
-                if(!GetCSV.isTaskRunning) GetCSV().execute()
+                if(!ExportCSV.isTaskRunning) ExportCSV().execute()
             }
             R.id.action_toggle_toast -> {
                 val pref = PreferenceManager.getDefaultSharedPreferences(MyApp.getInstance())
