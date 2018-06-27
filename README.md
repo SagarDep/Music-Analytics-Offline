@@ -1,4 +1,7 @@
 # MusicLogger
+
+![alt text](https://www.apple.com/v/apple-music/g/images/shared/og_image.png)
+
 Hobby Personal Project 
 
 I plan to build music logger which will run continuously on your device 24x7 and will log all the media which you play (including youtube videos) and then application will display the info in nice statistical manner (Pie charts and stuff) 
